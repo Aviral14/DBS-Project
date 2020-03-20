@@ -3,6 +3,7 @@ package com.DBSProject;
 import javax.swing.*;
 import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 import static com.DBSProject.CommonConstants.*;
 
@@ -14,10 +15,9 @@ public class Module1 extends BackgroundPanel {
     private JLabel pKey;
     private JLabel candidateKey;
     private JLabel highestNF;
-    private RectangleShape shape;
-    private JTextArea textArea;
     private Map<Set<String>, Set<String>> fds;
     private RoundButton decompositionButton;
+    private Set<String> attributes;
 
     public Module1() {
         framePanel = this;
@@ -66,34 +66,44 @@ public class Module1 extends BackgroundPanel {
         add(attributeLabel);
         add(attrCountField);
 
-        textArea = new JTextArea();
+
+        JTextArea textArea = new JTextArea();
         textArea.setEditable(true);
         textArea.setFont(new Font(getName(), Font.BOLD, 20));
         textArea.setForeground(Color.white);
         textArea.setOpaque(false);
         textArea.setBackground(new Color(0, 0, 0, 0));
+        textArea.setMargin(new Insets(10, 10, 10, 10));
         JScrollPane scrollPane = new JScrollPane(textArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
         scrollPane.getViewport().setOpaque(false);
         scrollPane.setOpaque(false);
         RoundButton resultButton = new RoundButton("<html>Fetch<br/>Result</html>", 880, 320, 120, 60, 25, Color.WHITE, Color.decode("#3d52e3"), true);
+        add(resultButton);
+        resultButton.setVisible(false);
 
         goButton.addActionListener(e -> {
             try {
                 int count = Integer.parseInt(attrCountField.getText());
                 if (count <= 18 && count != 0) {
-                    if (attrNameField != null) {
-                        for (RoundTextField roundTextField : attrNameField) framePanel.remove(roundTextField);
-                        framePanel.remove(fDSetLabel);
-                        framePanel.remove(shape);
-                        framePanel.remove(scrollPane);
-                        framePanel.remove(resultButton);
-
-                        resultLabel.setVisible(false);
-                        pKey.setVisible(false);
-                        candidateKey.setVisible(false);
-                        highestNF.setVisible(false);
-                        decompositionButton.setVisible(false);
+                    fDSetLabel.setBounds(150, 175 + 30 * ((count - 1) / 6), 200, 20);
+                    textArea.setBounds(205, 210 + 30 * ((count - 1) / 6), 512, 215 - 30 * ((count - 1) / 6));
+                    textArea.setText("");
+                    scrollPane.setBounds(205, 210 + 30 * ((count - 1) / 6), 512, 215 - 30 * ((count - 1) / 6));
+                    scrollPane.getVerticalScrollBar().setValue(0);
+                    scrollPane.getHorizontalScrollBar().setValue(0);
+                    resultLabel.setVisible(false);
+                    pKey.setVisible(false);
+                    candidateKey.setVisible(false);
+                    highestNF.setVisible(false);
+                    decompositionButton.setVisible(false);
+                    resultButton.setVisible(true);
+                    if (attrNameField == null) {
+                        framePanel.add(fDSetLabel);
+                        framePanel.add(scrollPane);
                     }
+
+                    if (attrNameField != null)
+                        for (RoundTextField roundTextField : attrNameField) framePanel.remove(roundTextField);
                     attrNameField = new RoundTextField[count];
                     char text = 'A';
                     for (int i = 0; i < count; i++) {
@@ -101,21 +111,14 @@ public class Module1 extends BackgroundPanel {
                         attrNameField[i].setText(String.valueOf(text++));
                         framePanel.add(attrNameField[i]);
                     }
-                    fDSetLabel.setBounds(150, 175 + 30 * ((count - 1) / 6), 200, 20);
-                    framePanel.add(fDSetLabel);
-                    shape = new RectangleShape(200, 205 + 30 * ((count - 1) / 6), 522, 225 - 30 * ((count - 1) / 6), Color.BLUE, 0.2f);
-                    framePanel.add(shape);
-                    textArea.setBounds(205, 210 + 30 * ((count - 1) / 6), 512, 215 - 30 * ((count - 1) / 6));
-                    scrollPane.setBounds(205, 210 + 30 * ((count - 1) / 6), 512, 215 - 30 * ((count - 1) / 6));
-                    framePanel.add(scrollPane);
-                    framePanel.add(resultButton);
+
                     framePanel.repaint(150, 125, frameWidth - 300, 315);
                 } else {
                     System.out.println("Number of attributes out of range");
                     // Do if attributes Count > 18
                 }
             } catch (NumberFormatException nfe) {
-                nfe.printStackTrace();
+                System.out.println("Invalid argument !");
                 // Do something if entered something other than number
                 // or Don't even allow to enter number
             }
@@ -152,7 +155,7 @@ public class Module1 extends BackgroundPanel {
 
         resultButton.addActionListener(e -> {
             if (checkFDValidity()) {
-                String[] resultArray = findResult();
+                String[] resultArray = findResult(textArea);
                 pKey.setText("PKey - " + resultArray[0]);
                 candidateKey.setText("CKey - " + resultArray[1]);
                 highestNF.setText("NF - " + resultArray[2]);
@@ -171,8 +174,8 @@ public class Module1 extends BackgroundPanel {
         return true;
     }
 
-    private String[] findResult() {
-        Set<String> attributes = new HashSet<>();
+    private String[] findResult(JTextArea textArea) {
+        attributes = new HashSet<>();
         for (RoundTextField roundTextField : attrNameField) {
             attributes.add(roundTextField.getText());
         }
@@ -186,20 +189,16 @@ public class Module1 extends BackgroundPanel {
         }
 
         Set<String> pKey = new HashSet<>(attributes);
-        Set<Set<String>> candidateKey = new HashSet<>();
-
-        candidateKey.add(attributes);
-        for (String attribute : attributes) {
-            pKey.remove(attribute);
-            if (closureOf(pKey).containsAll(attributes)) {
-                candidateKey.add(new HashSet<>(pKey));
-            } else {
-                pKey.add(attribute);
+        if (attributes.size() > 1) {
+            for (String attribute : attributes) {
+                pKey.remove(attribute);
+                if (!closureOf(pKey).equals(attributes)) {
+                    pKey.add(attribute);
+                }
             }
         }
-
-        removeRedundantCandidateKeys(candidateKey);
-
+        Set<Set<String>> candidateKey = findCandidateKeys(attributes);
+        removeRedundancy(candidateKey);
         return new String[]{pKey.toString(), candidateKey.toString(), findNF(candidateKey)};
     }
 
@@ -232,7 +231,25 @@ public class Module1 extends BackgroundPanel {
         return result + "NF";
     }
 
-    private void removeRedundantCandidateKeys(Set<Set<String>> candidateKey) {
+    private Set<Set<String>> findCandidateKeys(Set<String> leftToSearch) {
+        List<String> attr = new ArrayList<>(leftToSearch);
+        Set<Set<String>> candidateKey = new HashSet<>();
+
+        if (closureOf(leftToSearch).containsAll(attributes)) {
+            candidateKey.add(leftToSearch);
+        } else {
+            return new HashSet<>();
+        }
+        for (String s : leftToSearch) {
+            attr.remove(s);
+            candidateKey.addAll(findCandidateKeys(new HashSet<>(attr)));
+            attr.add(s);
+        }
+
+        return candidateKey;
+    }
+
+    private void removeRedundancy(Set<Set<String>> candidateKey) {
         Set<Set<String>> toRemove = new HashSet<>();
         for (Set<String> set : candidateKey) {
             for (Set<String> other : candidateKey) {
@@ -245,20 +262,17 @@ public class Module1 extends BackgroundPanel {
         candidateKey.removeAll(toRemove);
     }
 
-    private Set<String> closureOf(Set<String> pKey) {
-        Set<String> temp = new HashSet<>(pKey);
-
+    private Set<String> closureOf(Set<String> key) {
+        Set<String> temp = new HashSet<>(key);
         while (true) {
             boolean added = false;
             for (Map.Entry<Set<String>, Set<String>> entry : fds.entrySet()) {
-                if (temp.containsAll(entry.getKey()) && !temp.containsAll(entry.getValue())) {
-                    temp.addAll(entry.getValue());
-                    added = true;
+                if (temp.containsAll(entry.getKey())) {
+                    if (temp.addAll(entry.getValue()))
+                        added = true;
                 }
             }
-            if (!added) {
-                break;
-            }
+            if (!added) break;
         }
         return temp;
     }
