@@ -2,6 +2,8 @@ package com.DBSProject;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.geom.RoundRectangle2D;
 
 public class RoundButton extends JButton {
@@ -20,8 +22,19 @@ public class RoundButton extends JButton {
         setForeground(fColor);
         setContentAreaFilled(false);
         setFocusPainted(false);
-        setAlignmentX(CENTER_ALIGNMENT);
-        setAlignmentY(CENTER_ALIGNMENT);
+        setHorizontalAlignment(SwingConstants.CENTER);
+        setMargin(new Insets(0, 0, 0, 0));
+        RoundButton tempButton = this;
+        this.addMouseListener(new MouseAdapter() {
+            Color color = tempButton.getForeground();
+            public void mouseEntered(MouseEvent me) {
+                color = tempButton.getForeground();
+                tempButton.setForeground(Color.LIGHT_GRAY); // change the color to green when mouse over a button
+            }
+            public void mouseExited(MouseEvent me) {
+                tempButton.setForeground(color);
+            }
+        });
     }
 
     @Override
@@ -44,3 +57,4 @@ public class RoundButton extends JButton {
         }
     }
 }
+

@@ -2,6 +2,7 @@ package com.DBSProject;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
@@ -25,10 +26,12 @@ public class MainFrame extends JFrame {
         setVisible(true);
         mainFrame = this;
 
-        RoundButton minimize = new RoundButton("-", frameWidth - 95, 5, 40, 20, 10, Color.white, blueColor, false);
-        RoundButton close = new RoundButton("X", frameWidth - 45, 5, 40, 20, 10, Color.white, Color.red, false);
-        close.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 9));
-        minimize.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 15));
+        RoundButton minimize = new RoundButton("_", frameWidth - 105, 5, 50, 20, 10, Color.white, blueColor, false);
+        RoundButton close = new RoundButton("X", frameWidth - 55, 5, 50, 20, 10, Color.white, Color.red, false);
+        close.setFont(new Font("ARIAL", Font.BOLD, 13));
+        minimize.setFont(new Font("ARIAL", Font.BOLD, 15));
+        // Fix cross platform rendering issues. Displays on Windows only.
+        minimize.setMargin(new Insets(0, 0, 7, 0));
         close.addActionListener(e -> System.exit(0));
         minimize.addActionListener(e -> setState(JFrame.ICONIFIED));
 
@@ -87,3 +90,4 @@ class MainPanel extends BackgroundPanel{
         }
     }
 }
+
