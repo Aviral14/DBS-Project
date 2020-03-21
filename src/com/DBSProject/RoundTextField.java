@@ -13,9 +13,7 @@ public class RoundTextField extends JTextField {
         backColor = bColor;
         this.backGround = backGround;
         setBounds(x, y, w, h);
-        setHorizontalAlignment(CENTER);
-        setAlignmentX(CENTER_ALIGNMENT);
-        setAlignmentY(CENTER_ALIGNMENT);
+        setHorizontalAlignment(SwingConstants.CENTER);
         setFont(new Font(Font.SANS_SERIF, Font.BOLD, 15));
         setForeground(fColor);
         setOpaque(false);

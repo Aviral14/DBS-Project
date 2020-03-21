@@ -26,15 +26,15 @@ public class Module1 extends BackgroundPanel {
         heading.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 25));
         heading.setBounds(120, 10, 1100, 80);
         heading.setForeground(Color.WHITE);
-        RoundButton back = new RoundButton("←", 10, 10, 50, 25, 10, Color.white, blueColor, false);
+        RoundButton back = new RoundButton("←", 10, 10, 60, 25, 10, Color.white, blueColor, false);
         back.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 15));
         back.addActionListener(e -> {
             mainFrame.remove(framePanel);
             mainFrame.add(new MainPanel());
             mainFrame.repaint();
         });
-        JLabel warning1 = new JLabel("<html>&#9432; &ensp; <b>By default, name of attributes are A, B, C .. &ensp; BUT, you can change as per your wish !</b></html>");
-        JLabel warning2 = new JLabel("<html>&#9432; &ensp; <b>Please enter FDs in format: &ensp; (A,B->C,D) &ensp; :ignore white_spaces, each per line !</b></html>");
+        JLabel warning1 = new JLabel("<html>&#9432; &ensp; <b>By default, name of attributes are A, B, C..., but you can change as per your wish</b></html>");
+        JLabel warning2 = new JLabel("<html>&#9432; &ensp; <b>Please enter FDs in format: &ensp; A,B->C,D &ensp; :ignore white_spaces, each per line !</b></html>");
         warning1.setForeground(Color.green);
         warning2.setForeground(Color.green);
         warning1.setBounds(120, frameHeight - 75, 1000, 25);
@@ -52,11 +52,11 @@ public class Module1 extends BackgroundPanel {
     }
 
     private void addIOComponents() {
-        JLabel attributeLabel = new JLabel("▸   No. of attributes -");
+        JLabel attributeLabel = new JLabel("▸   Number of attributes: ");
         attributeLabel.setFont(new Font(getName(), Font.BOLD, 20));
         attributeLabel.setForeground(Color.white);
-        attributeLabel.setBounds(150, 100, 200, 20);
-        RoundButton goButton = new RoundButton(">", 520, 100, 40, 20, 5, Color.white, blueColor, false);
+        attributeLabel.setBounds(150, 100, 400, 20);
+        RoundButton goButton = new RoundButton(">", 500, 100, 50, 20, 5, Color.white, blueColor, false);
         goButton.setFont(new Font(getName(), Font.BOLD, 10));
         fDSetLabel = new JLabel("▸   FD Set -");
         fDSetLabel.setFont(new Font(getName(), Font.BOLD, 20));
@@ -77,7 +77,7 @@ public class Module1 extends BackgroundPanel {
         JScrollPane scrollPane = new JScrollPane(textArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
         scrollPane.getViewport().setOpaque(false);
         scrollPane.setOpaque(false);
-        RoundButton resultButton = new RoundButton("<html>Fetch<br/>Result</html>", 880, 320, 120, 60, 25, Color.WHITE, Color.decode("#3d52e3"), true);
+        RoundButton resultButton = new RoundButton("<html>Fetch<br/>Result</html>", 950, 280, 140, 60, 25, Color.WHITE, Color.decode("#3d52e3"), true);
         add(resultButton);
         resultButton.setVisible(false);
 
@@ -140,8 +140,10 @@ public class Module1 extends BackgroundPanel {
         highestNF.setFont(new Font(getName(), Font.BOLD, 20));
         highestNF.setForeground(Color.white);
         highestNF.setBounds(200, 565, 800, 25);
-        decompositionButton = new RoundButton("<html>See<br/>Decomposition</html>", 950, 540, 140, 60, 25, Color.black, Color.green, true);
+        decompositionButton = new RoundButton("<html><center>See<br>Decomposition</center></html>\n", 950, 500, 140, 60, 25, Color.WHITE, Color.decode("#3d52e3"), true);
+        decompositionButton.setMargin(new Insets(0, -10, 0, 0));
         decompositionButton.setFont(new Font(getName(), Font.BOLD, 15));
+        decompositionButton.setHorizontalAlignment(SwingConstants.CENTER);
         add(decompositionButton);
         add(resultLabel);
         add(pKey);
