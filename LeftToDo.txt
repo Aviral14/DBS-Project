@@ -1,6 +1,1 @@
-1. check no of attributes, if > 18
-2. check FDs format
 3. Show decomposition panel(kind of pop-up) on pressing decomposition button
-4. add horizontal scroll pane to PKey and CKey field
-5. add back and enter button action
-6.

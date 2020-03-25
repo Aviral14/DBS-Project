@@ -1,6 +1,7 @@
 package com.DBSProject;
 
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
@@ -15,10 +16,12 @@ public class Module1 extends BackgroundPanel {
     private JLabel pKeyLabel;
     private JLabel cKeyLabel;
     private JLabel highestNF;
+    private JScrollPane cKeyScroll;
     private List<Set<String>> fdX;
     private List<Set<String>> fdY;
     private RoundButton decompositionButton;
     private Set<String> attributes;
+    private RoundButton goButton;
 
     public Module1() {
         framePanel = this;
@@ -57,12 +60,13 @@ public class Module1 extends BackgroundPanel {
         attributeLabel.setFont(new Font(getName(), Font.BOLD, 20));
         attributeLabel.setForeground(Color.white);
         attributeLabel.setBounds(150, 100, 400, 20);
-        RoundButton goButton = new RoundButton(">", 500, 100, 50, 20, 5, Color.white, blueColor, false);
+        goButton = new RoundButton(">", 500, 100, 50, 20, 5, Color.white, blueColor, false);
         goButton.setFont(new Font(getName(), Font.BOLD, 10));
         fDSetLabel = new JLabel("▸   FD Set -");
         fDSetLabel.setFont(new Font(getName(), Font.BOLD, 20));
         fDSetLabel.setForeground(Color.white);
         attrCountField = new RoundTextField(420, 100, 60, 20, 10, Color.RED, Color.green, false);
+        attrCountField.setCaretColor(Color.white);
         add(goButton);
         add(attributeLabel);
         add(attrCountField);
@@ -74,20 +78,23 @@ public class Module1 extends BackgroundPanel {
         textArea.setForeground(Color.white);
         textArea.setOpaque(false);
         textArea.setBackground(new Color(0, 0, 0, 0));
+        textArea.setCaretColor(Color.WHITE);
         textArea.setMargin(new Insets(10, 10, 10, 10));
-        JScrollPane scrollPane = new JScrollPane(textArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+        JScrollPane scrollPane = new JScrollPane(textArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scrollPane.getViewport().setOpaque(false);
         scrollPane.setOpaque(false);
+        scrollPane.setBorder(new LineBorder(Color.WHITE, 2, true));
         RoundButton resultButton = new RoundButton("<html>Fetch<br/>Result</html>", 950, 280, 140, 60, 25, Color.WHITE, Color.decode("#3d52e3"), true);
         add(resultButton);
         resultButton.setVisible(false);
+        mainFrame.getRootPane().setDefaultButton(goButton);
+        SwingUtilities.invokeLater(() -> attrCountField.requestFocus());
 
         goButton.addActionListener(e -> {
             try {
                 int count = Integer.parseInt(attrCountField.getText());
-                if (count <= 18 && count != 0) {
+                if (count > 0 && count <= 18) {
                     fDSetLabel.setBounds(150, 175 + 30 * ((count - 1) / 6), 200, 20);
-                    textArea.setBounds(205, 210 + 30 * ((count - 1) / 6), 512, 215 - 30 * ((count - 1) / 6));
                     textArea.setText("");
                     scrollPane.setBounds(205, 210 + 30 * ((count - 1) / 6), 512, 215 - 30 * ((count - 1) / 6));
                     scrollPane.getVerticalScrollBar().setValue(0);
@@ -95,6 +102,7 @@ public class Module1 extends BackgroundPanel {
                     resultLabel.setVisible(false);
                     pKeyLabel.setVisible(false);
                     cKeyLabel.setVisible(false);
+                    cKeyScroll.setVisible(false);
                     highestNF.setVisible(false);
                     decompositionButton.setVisible(false);
                     resultButton.setVisible(true);
@@ -114,14 +122,40 @@ public class Module1 extends BackgroundPanel {
                     }
 
                     framePanel.repaint(150, 125, frameWidth - 300, 315);
+                    textArea.requestFocusInWindow();
                 } else {
-                    System.out.println("Number of attributes out of range");
-                    // Do if attributes Count > 18
+                    if (attrNameField != null) {
+                        fDSetLabel.setBounds(0, 0, 0, 0);
+                        scrollPane.setBounds(0, 0, 0, 0);
+                        textArea.setBounds(0, 0, 0, 0);
+                        for (RoundTextField roundTextField : attrNameField) framePanel.remove(roundTextField);
+                        resultLabel.setVisible(false);
+                        pKeyLabel.setVisible(false);
+                        cKeyLabel.setVisible(false);
+                        cKeyScroll.setVisible(false);
+                        highestNF.setVisible(false);
+                        resultButton.setVisible(false);
+                        decompositionButton.setVisible(false);
+                        framePanel.repaint(150, 125, frameWidth - 300, 315);
+                    }
+                    showErrorPopUp("Attribute count must be in range [1, 18] !");
                 }
             } catch (NumberFormatException nfe) {
-                System.out.println("Invalid argument !");
-                // Do something if entered something other than number
-                // or Don't even allow to enter number
+                if (attrNameField != null) {
+                    fDSetLabel.setBounds(0, 0, 0, 0);
+                    scrollPane.setBounds(0, 0, 0, 0);
+                    textArea.setBounds(0, 0, 0, 0);
+                    for (RoundTextField roundTextField : attrNameField) framePanel.remove(roundTextField);
+                    resultLabel.setVisible(false);
+                    pKeyLabel.setVisible(false);
+                    cKeyLabel.setVisible(false);
+                    cKeyScroll.setVisible(false);
+                    highestNF.setVisible(false);
+                    resultButton.setVisible(false);
+                    decompositionButton.setVisible(false);
+                    framePanel.repaint(150, 125, frameWidth - 300, 315);
+                }
+                showErrorPopUp("Please enter a valid 'Number' in range [1, 18] !");
             }
         });
         
@@ -132,15 +166,20 @@ public class Module1 extends BackgroundPanel {
         pKeyLabel = new JLabel("PKey");
         pKeyLabel.setFont(new Font(getName(), Font.BOLD, 20));
         pKeyLabel.setForeground(Color.white);
-        pKeyLabel.setBounds(200, 495, 800, 25);
+        pKeyLabel.setBounds(200, 495, 700, 25);
         cKeyLabel = new JLabel("CKey");
         cKeyLabel.setFont(new Font(getName(), Font.BOLD, 20));
         cKeyLabel.setForeground(Color.white);
-        cKeyLabel.setBounds(200, 530, 800, 25);
+        cKeyScroll = new JScrollPane(cKeyLabel, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        cKeyScroll.setBounds(200, 530, 700, 35);
+        cKeyScroll.getViewport().setOpaque(false);
+        cKeyScroll.setOpaque(false);
+        cKeyScroll.setBorder(BorderFactory.createEmptyBorder());
+        cKeyScroll.getHorizontalScrollBar().setPreferredSize(new Dimension(0, 8));
         highestNF = new JLabel("NF");
         highestNF.setFont(new Font(getName(), Font.BOLD, 20));
         highestNF.setForeground(Color.white);
-        highestNF.setBounds(200, 565, 800, 25);
+        highestNF.setBounds(200, 575, 700, 25);
         decompositionButton = new RoundButton("<html><center>See<br>Decomposition</center></html>\n", 950, 500, 140, 60, 25, Color.WHITE, Color.decode("#3d52e3"), true);
         decompositionButton.setMargin(new Insets(0, -10, 0, 0));
         decompositionButton.setFont(new Font(getName(), Font.BOLD, 15));
@@ -148,39 +187,42 @@ public class Module1 extends BackgroundPanel {
         add(decompositionButton);
         add(resultLabel);
         add(pKeyLabel);
-        add(cKeyLabel);
+        add(cKeyScroll);
         add(highestNF);
         resultLabel.setVisible(false);
         pKeyLabel.setVisible(false);
         cKeyLabel.setVisible(false);
+        cKeyScroll.setVisible(false);
         highestNF.setVisible(false);
         decompositionButton.setVisible(false);
 
         resultButton.addActionListener(e -> {
-            if (checkFDValidity()) {
-                String[] resultArray = findResult(textArea);
+            try {
+                checkFDValidity(textArea);
+                String[] resultArray = findResult();
                 pKeyLabel.setText("PKey - " + resultArray[0]);
                 cKeyLabel.setText("CKey - " + resultArray[1]);
                 highestNF.setText("NF - " + resultArray[2]);
                 resultLabel.setVisible(true);
                 pKeyLabel.setVisible(true);
                 cKeyLabel.setVisible(true);
+                cKeyScroll.setVisible(true);
                 highestNF.setVisible(true);
                 decompositionButton.setVisible(true);
-            } else {
-                System.out.println("FDs are not valid !");
+                mainFrame.getRootPane().setDefaultButton(decompositionButton);
+            } catch (Exception ex) {
+                showErrorPopUp(ex.getMessage());
             }
         });
     }
 
-    private boolean checkFDValidity() {
-        return true;
-    }
-
-    private String[] findResult(JTextArea textArea) {
+    private void checkFDValidity(JTextArea textArea) throws Exception {
         attributes = new HashSet<>();
         for (RoundTextField roundTextField : attrNameField) {
-            attributes.add(roundTextField.getText());
+            String temp = roundTextField.getText();
+            if (temp.equals(""))
+                throw new Exception("Attribute name should not be empty !");
+            attributes.add(temp);
         }
         fdX = new ArrayList<>();
         fdY = new ArrayList<>();
@@ -189,10 +231,26 @@ public class Module1 extends BackgroundPanel {
             String array = line.replaceAll(" ", "");
             if (!array.equals("")) {
                 String[] properFD = array.split("->");
+                if (properFD.length < 2)
+                    throw new Exception("FDs are not in proper format !");
                 fdX.add(new HashSet<>(Arrays.asList(properFD[0].split(","))));
                 fdY.add(new HashSet<>(Arrays.asList(properFD[1].split(","))));
             }
         }
+
+        for (int i = 0; i < fdX.size(); i++) {
+            for (String s : fdX.get(i)) {
+                if (!attributes.contains(s))
+                    throw new Exception("FDs are not in proper format !");
+            }
+            for (String s : fdY.get(i)) {
+                if (!attributes.contains(s))
+                    throw new Exception("FDs are not in proper format !");
+            }
+        }
+    }
+
+    private String[] findResult() {
         Set<String> pKey = new HashSet<>();
         Set<Set<String>> candidateKey = findCandidateKeys(attributes);
         removeRedundancy(candidateKey);
@@ -283,5 +341,11 @@ public class Module1 extends BackgroundPanel {
             if (!added) break;
         }
         return temp;
+    }
+
+    private void showErrorPopUp(String msg) {
+        JOptionPane.showMessageDialog(null, msg);
+        mainFrame.getRootPane().setDefaultButton(goButton);
+        attrCountField.requestFocusInWindow();
     }
 }
