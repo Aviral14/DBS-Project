@@ -12,10 +12,11 @@ public class Module1 extends BackgroundPanel {
     private RoundTextField attrCountField;
     private RoundTextField[] attrNameField;
     private JLabel resultLabel;
-    private JLabel pKey;
-    private JLabel candidateKey;
+    private JLabel pKeyLabel;
+    private JLabel cKeyLabel;
     private JLabel highestNF;
-    private Map<Set<String>, Set<String>> fds;
+    private List<Set<String>> fdX;
+    private List<Set<String>> fdY;
     private RoundButton decompositionButton;
     private Set<String> attributes;
 
@@ -92,8 +93,8 @@ public class Module1 extends BackgroundPanel {
                     scrollPane.getVerticalScrollBar().setValue(0);
                     scrollPane.getHorizontalScrollBar().setValue(0);
                     resultLabel.setVisible(false);
-                    pKey.setVisible(false);
-                    candidateKey.setVisible(false);
+                    pKeyLabel.setVisible(false);
+                    cKeyLabel.setVisible(false);
                     highestNF.setVisible(false);
                     decompositionButton.setVisible(false);
                     resultButton.setVisible(true);
@@ -128,14 +129,14 @@ public class Module1 extends BackgroundPanel {
         resultLabel.setFont(new Font(getName(), Font.BOLD, 20));
         resultLabel.setForeground(Color.GREEN);
         resultLabel.setBounds(150, 460, 200, 25);
-        pKey = new JLabel("PKey");
-        pKey.setFont(new Font(getName(), Font.BOLD, 20));
-        pKey.setForeground(Color.white);
-        pKey.setBounds(200, 495, 800, 25);
-        candidateKey = new JLabel("CKey");
-        candidateKey.setFont(new Font(getName(), Font.BOLD, 20));
-        candidateKey.setForeground(Color.white);
-        candidateKey.setBounds(200, 530, 800, 25);
+        pKeyLabel = new JLabel("PKey");
+        pKeyLabel.setFont(new Font(getName(), Font.BOLD, 20));
+        pKeyLabel.setForeground(Color.white);
+        pKeyLabel.setBounds(200, 495, 800, 25);
+        cKeyLabel = new JLabel("CKey");
+        cKeyLabel.setFont(new Font(getName(), Font.BOLD, 20));
+        cKeyLabel.setForeground(Color.white);
+        cKeyLabel.setBounds(200, 530, 800, 25);
         highestNF = new JLabel("NF");
         highestNF.setFont(new Font(getName(), Font.BOLD, 20));
         highestNF.setForeground(Color.white);
@@ -146,24 +147,24 @@ public class Module1 extends BackgroundPanel {
         decompositionButton.setHorizontalAlignment(SwingConstants.CENTER);
         add(decompositionButton);
         add(resultLabel);
-        add(pKey);
-        add(candidateKey);
+        add(pKeyLabel);
+        add(cKeyLabel);
         add(highestNF);
         resultLabel.setVisible(false);
-        pKey.setVisible(false);
-        candidateKey.setVisible(false);
+        pKeyLabel.setVisible(false);
+        cKeyLabel.setVisible(false);
         highestNF.setVisible(false);
         decompositionButton.setVisible(false);
 
         resultButton.addActionListener(e -> {
             if (checkFDValidity()) {
                 String[] resultArray = findResult(textArea);
-                pKey.setText("PKey - " + resultArray[0]);
-                candidateKey.setText("CKey - " + resultArray[1]);
+                pKeyLabel.setText("PKey - " + resultArray[0]);
+                cKeyLabel.setText("CKey - " + resultArray[1]);
                 highestNF.setText("NF - " + resultArray[2]);
                 resultLabel.setVisible(true);
-                pKey.setVisible(true);
-                candidateKey.setVisible(true);
+                pKeyLabel.setVisible(true);
+                cKeyLabel.setVisible(true);
                 highestNF.setVisible(true);
                 decompositionButton.setVisible(true);
             } else {
@@ -181,42 +182,44 @@ public class Module1 extends BackgroundPanel {
         for (RoundTextField roundTextField : attrNameField) {
             attributes.add(roundTextField.getText());
         }
-        fds = new HashMap<>();
+        fdX = new ArrayList<>();
+        fdY = new ArrayList<>();
+
         for (String line : textArea.getText().split("\\n")) {
             String array = line.replaceAll(" ", "");
             if (!array.equals("")) {
                 String[] properFD = array.split("->");
-                fds.put(new HashSet<>(Arrays.asList(properFD[0].split(","))), new HashSet<>(Arrays.asList(properFD[1].split(","))));
+                fdX.add(new HashSet<>(Arrays.asList(properFD[0].split(","))));
+                fdY.add(new HashSet<>(Arrays.asList(properFD[1].split(","))));
+            }
+        }
+        Set<String> pKey = new HashSet<>();
+        Set<Set<String>> candidateKey = findCandidateKeys(attributes);
+        removeRedundancy(candidateKey);
+
+        for (Set<String> set : candidateKey) {
+            if (pKey.size() == 0 || set.size() < pKey.size()) {
+                pKey = new HashSet<>(set);
             }
         }
 
-        Set<String> pKey = new HashSet<>(attributes);
-        if (attributes.size() > 1) {
-            for (String attribute : attributes) {
-                pKey.remove(attribute);
-                if (!closureOf(pKey).equals(attributes)) {
-                    pKey.add(attribute);
-                }
-            }
-        }
-        Set<Set<String>> candidateKey = findCandidateKeys(attributes);
-        removeRedundancy(candidateKey);
         return new String[]{pKey.toString(), candidateKey.toString(), findNF(candidateKey)};
     }
 
     private String findNF(Set<Set<String>> candidateKey) {
         int result = 4;
-        for (Map.Entry<Set<String>, Set<String>> entry : fds.entrySet()) {
-            if (!candidateKey.contains(entry.getKey())) {
+        for (int i = 0; i < fdX.size(); i++) {
+            Set<String> entry = fdX.get(i);
+            if (!candidateKey.contains(entry)) {
                 result = 1;
                 boolean xFound = false, yFound = false;
 
                 // Checking whether X or Y part of FD is part of CKey :
                 for (Set<String> set : candidateKey) {
-                    if (!xFound && set.containsAll(entry.getKey())) {
+                    if (!xFound && set.containsAll(entry)) {
                         xFound = true;
                     }
-                    if (!yFound && set.containsAll(entry.getValue())) {
+                    if (!yFound && set.containsAll(fdY.get(i))) {
                         yFound = true;
                     }
                 }
@@ -233,45 +236,48 @@ public class Module1 extends BackgroundPanel {
         return result + "NF";
     }
 
-    private Set<Set<String>> findCandidateKeys(Set<String> leftToSearch) {
-        List<String> attr = new ArrayList<>(leftToSearch);
+    private Set<Set<String>> findCandidateKeys(Set<String> remainingSet) {
         Set<Set<String>> candidateKey = new HashSet<>();
-
-        if (closureOf(leftToSearch).containsAll(attributes)) {
-            candidateKey.add(leftToSearch);
-        } else {
-            return new HashSet<>();
-        }
-        for (String s : leftToSearch) {
-            attr.remove(s);
-            candidateKey.addAll(findCandidateKeys(new HashSet<>(attr)));
-            attr.add(s);
+        if (closureOf(remainingSet).equals(attributes)) {
+            candidateKey.add(remainingSet);
+            if (remainingSet.size() > 1) {
+                Set<String> temp = new HashSet<>(remainingSet);
+                for (String s : remainingSet) {
+                    temp.remove(s);
+                    candidateKey.addAll(findCandidateKeys(new HashSet<>(temp)));
+                    temp.add(s);
+                }
+            }
         }
 
         return candidateKey;
     }
 
     private void removeRedundancy(Set<Set<String>> candidateKey) {
-        Set<Set<String>> toRemove = new HashSet<>();
-        for (Set<String> set : candidateKey) {
-            for (Set<String> other : candidateKey) {
-                if (!other.equals(set) && other.containsAll(set)) {
-                    toRemove.add(new HashSet<>(other));
+        Iterator<Set<String>> iterator = candidateKey.iterator();
+        while (iterator.hasNext()) {
+            Set<String> set = iterator.next();
+            Set<Set<String>> temp = new HashSet<>(candidateKey);
+            temp.remove(set);
+
+            for (Set<String> s : temp) {
+                if (set.containsAll(s)) {
+                    iterator.remove();
+                    break;
                 }
             }
-
         }
-        candidateKey.removeAll(toRemove);
     }
 
     private Set<String> closureOf(Set<String> key) {
         Set<String> temp = new HashSet<>(key);
         while (true) {
             boolean added = false;
-            for (Map.Entry<Set<String>, Set<String>> entry : fds.entrySet()) {
-                if (temp.containsAll(entry.getKey())) {
-                    if (temp.addAll(entry.getValue()))
+            for (int i = 0; i < fdX.size(); i++) {
+                if (temp.containsAll(fdX.get(i))) {
+                    if (temp.addAll(fdY.get(i))) {
                         added = true;
+                    }
                 }
             }
             if (!added) break;
