@@ -231,7 +231,7 @@ public class Module1 extends BackgroundPanel {
             String array = line.replaceAll(" ", "");
             if (!array.equals("")) {
                 String[] properFD = array.split("->");
-                if (properFD.length < 2)
+                if (properFD.length != 2)
                     throw new Exception("FDs are not in proper format !");
                 fdX.add(new HashSet<>(Arrays.asList(properFD[0].split(","))));
                 fdY.add(new HashSet<>(Arrays.asList(properFD[1].split(","))));
