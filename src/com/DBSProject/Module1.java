@@ -19,10 +19,13 @@ public class Module1 extends BackgroundPanel {
     private JScrollPane cKeyScroll;
     private List<Set<String>> fdX;
     private List<Set<String>> fdY;
-    private RoundButton decompositionButton;
+    Set<String> pKey;
+    Set<Set<String>> candidateKey;
     private Set<String> attributes;
     private RoundButton goButton;
     private List<Integer> nFList;
+    private JScrollPane scrollPane;
+    private JLabel decompositionLabel;
 
     public Module1() {
         framePanel = this;
@@ -51,7 +54,7 @@ public class Module1 extends BackgroundPanel {
         add(back);
         add(heading);
         add(new RectangleShape(100, 90, (frameWidth - 200), 350, Color.WHITE, 0.2f));
-        add(new RectangleShape(100, 450, (frameWidth - 200), 160, Color.WHITE, 0.2f));
+        add(new RectangleShape(100, 450, (frameWidth - 200), 425, Color.WHITE, 0.2f));
 
         addIOComponents();
     }
@@ -81,10 +84,20 @@ public class Module1 extends BackgroundPanel {
         textArea.setBackground(new Color(0, 0, 0, 0));
         textArea.setCaretColor(Color.WHITE);
         textArea.setMargin(new Insets(10, 10, 10, 10));
-        JScrollPane scrollPane = new JScrollPane(textArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        decompositionLabel = new JLabel();
+        decompositionLabel.setFont(new Font(getName(), Font.BOLD, 20));
+        decompositionLabel.setForeground(Color.white);
+        decompositionLabel.setOpaque(false);
+        decompositionLabel.setBackground(new Color(0, 0, 0, 0));
+        decompositionLabel.setVerticalAlignment(SwingConstants.TOP);
+        scrollPane = new JScrollPane(textArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scrollPane.getViewport().setOpaque(false);
         scrollPane.setOpaque(false);
         scrollPane.setBorder(new LineBorder(Color.WHITE, 2, true));
+        JScrollPane scrollPaneDecomposition = new JScrollPane(decompositionLabel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollPaneDecomposition.getViewport().setOpaque(false);
+        scrollPaneDecomposition.setOpaque(false);
+        scrollPaneDecomposition.setBorder(new LineBorder(Color.WHITE, 2, true));
         RoundButton resultButton = new RoundButton("<html>Fetch<br/>Result</html>", 950, 280, 140, 60, 25, Color.WHITE, Color.decode("#3d52e3"), true);
         add(resultButton);
         resultButton.setVisible(false);
@@ -100,12 +113,15 @@ public class Module1 extends BackgroundPanel {
                     scrollPane.setBounds(205, 210 + 30 * ((count - 1) / 6), 512, 215 - 30 * ((count - 1) / 6));
                     scrollPane.getVerticalScrollBar().setValue(0);
                     scrollPane.getHorizontalScrollBar().setValue(0);
+                    scrollPaneDecomposition.setBounds(200, 605, 512, 260);
+                    scrollPaneDecomposition.getVerticalScrollBar().setValue(0);
+                    scrollPaneDecomposition.getHorizontalScrollBar().setValue(0);
                     resultLabel.setVisible(false);
                     pKeyLabel.setVisible(false);
                     cKeyLabel.setVisible(false);
                     cKeyScroll.setVisible(false);
                     highestNF.setVisible(false);
-                    decompositionButton.setVisible(false);
+                    scrollPaneDecomposition.setVisible(false);
                     resultButton.setVisible(true);
                     if (attrNameField == null) {
                         framePanel.add(fDSetLabel);
@@ -136,7 +152,7 @@ public class Module1 extends BackgroundPanel {
                         cKeyScroll.setVisible(false);
                         highestNF.setVisible(false);
                         resultButton.setVisible(false);
-                        decompositionButton.setVisible(false);
+                        scrollPaneDecomposition.setVisible(false);
                         framePanel.repaint(150, 125, frameWidth - 300, 315);
                     }
                     showErrorPopUp("Attribute count must be in range [1, 18] !");
@@ -153,13 +169,13 @@ public class Module1 extends BackgroundPanel {
                     cKeyScroll.setVisible(false);
                     highestNF.setVisible(false);
                     resultButton.setVisible(false);
-                    decompositionButton.setVisible(false);
+                    scrollPaneDecomposition.setVisible(false);
                     framePanel.repaint(150, 125, frameWidth - 300, 315);
                 }
                 showErrorPopUp("Please enter a valid 'Number' in range [1, 18] !");
             }
         });
-        
+
         resultLabel = new JLabel("<html>▸ &ensp; <u>Result →</u></html>");
         resultLabel.setFont(new Font(getName(), Font.BOLD, 20));
         resultLabel.setForeground(Color.GREEN);
@@ -181,21 +197,17 @@ public class Module1 extends BackgroundPanel {
         highestNF.setFont(new Font(getName(), Font.BOLD, 20));
         highestNF.setForeground(Color.white);
         highestNF.setBounds(200, 575, 700, 25);
-        decompositionButton = new RoundButton("<html><center>See<br>Decomposition</center></html>\n", 950, 500, 140, 60, 25, Color.WHITE, Color.decode("#3d52e3"), true);
-        decompositionButton.setMargin(new Insets(0, -10, 0, 0));
-        decompositionButton.setFont(new Font(getName(), Font.BOLD, 15));
-        decompositionButton.setHorizontalAlignment(SwingConstants.CENTER);
-        add(decompositionButton);
         add(resultLabel);
         add(pKeyLabel);
         add(cKeyScroll);
         add(highestNF);
+        add(scrollPaneDecomposition);
         resultLabel.setVisible(false);
         pKeyLabel.setVisible(false);
         cKeyLabel.setVisible(false);
         cKeyScroll.setVisible(false);
         highestNF.setVisible(false);
-        decompositionButton.setVisible(false);
+        scrollPaneDecomposition.setVisible(false);
 
         resultButton.addActionListener(e -> {
             try {
@@ -204,13 +216,13 @@ public class Module1 extends BackgroundPanel {
                 pKeyLabel.setText("PKey - " + resultArray[0]);
                 cKeyLabel.setText("CKey - " + resultArray[1]);
                 highestNF.setText("NF - " + resultArray[2]);
+                decompositionLabel.setText(getDecomposition());
                 resultLabel.setVisible(true);
                 pKeyLabel.setVisible(true);
                 cKeyLabel.setVisible(true);
                 cKeyScroll.setVisible(true);
                 highestNF.setVisible(true);
-                decompositionButton.setVisible(true);
-                mainFrame.getRootPane().setDefaultButton(decompositionButton);
+                scrollPaneDecomposition.setVisible(true);
             } catch (Exception ex) {
                 showErrorPopUp(ex.getMessage());
             }
@@ -256,9 +268,10 @@ public class Module1 extends BackgroundPanel {
     }
 
     private String[] findResult() {
-        Set<String> pKey = new HashSet<>();
-        Set<Set<String>> candidateKey = findCandidateKeys(attributes);
+        pKey = new HashSet<>();
+        candidateKey = findCandidateKeys(attributes);
         removeRedundancy(candidateKey);
+        minimalCover();
 
         for (Set<String> set : candidateKey) {
             if (pKey.size() == 0 || set.size() < pKey.size()) {
@@ -272,6 +285,7 @@ public class Module1 extends BackgroundPanel {
     private String findNF(Set<Set<String>> candidateKey) {
         nFList = new ArrayList<>();
         int min = 4;
+
         for (int i = 0; i < fdX.size(); i++) {
             int result = 4;
             Set<String> X = fdX.get(i);
@@ -295,6 +309,7 @@ public class Module1 extends BackgroundPanel {
                 }
                 if (bigX) {
                     nFList.add(4);
+                    System.out.println(4);
                     continue;
                 }
                 if (yFound) {
@@ -304,14 +319,165 @@ public class Module1 extends BackgroundPanel {
                 }
                 if (result < min)
                    min = result;
-                nFList.add(result);
+//                nFList.add(result);
             }
             nFList.add(result);
+            System.out.println(result);
         }
         if (min == 4)
             return "BCNF";
         else
             return min + "NF";
+    }
+
+    private String getDecomposition() {
+        ArrayList<ArrayList<String>> decomposition = new ArrayList<>();
+        ArrayList<Integer> primaryKeyNo = new ArrayList<>();
+        decomposition.add(new ArrayList<>(attributes));
+        int currentnf;
+        boolean firstExists = true;
+        if (highestNF.getText().charAt(5) == 'B') {
+            return "Already in BCNF";
+        } else {
+            currentnf = highestNF.getText().charAt(5) - '0';
+        }
+        for (int i = 0; i < fdX.size(); i++) {
+            Set<String> x = fdX.get(i);
+            Set<String> y = fdY.get(i);
+            if (nFList.get(i) == currentnf) {
+
+                // Separate lhs and rhs of dependency into separate table
+                decomposition.add(new ArrayList<>());
+                decomposition.get(decomposition.size() - 1).addAll(x);
+                decomposition.get(decomposition.size() - 1).addAll(y);
+                primaryKeyNo.add(x.size());
+                decomposition.get(0).removeAll(y); // Remove rhs from original table to increase nf
+//                for (String s : dependent) {
+//                    if (decomposition.get(0).contains(s)) {
+//                        remove = false;
+//                    }
+//                }
+//                if (remove) {
+//                    decomposition.get(0).removeAll(x);
+//                }
+//                if (decomposition.get(0).size() == 0) {
+//                    decomposition.remove(0);
+//                    firstExists = false;
+//                }
+            } else {
+                // If nf does not need increasing, check for transitive dependency: helps in finding lossless decomposition
+                for (int j = 0; j < fdX.size(); j++) {
+                    if (i != j) {
+                        Set<String> xn = fdX.get(j);
+                        Set<String> yn = fdY.get(j);
+                        if (yn.equals(x)) {
+                            decomposition.add(new ArrayList<>());
+                            decomposition.get(decomposition.size() - 1).addAll(x);
+                            decomposition.get(decomposition.size() - 1).addAll(y);
+                            primaryKeyNo.add(x.size());
+                            decomposition.get(0).removeAll(y);
+                        }
+                    }
+                }
+            }
+        }
+
+        return getDecompositionString(decomposition, primaryKeyNo, firstExists);
+//        return "<html><u>Hi</u><html>";
+    }
+
+    private String getDecompositionString(ArrayList<ArrayList<String>> decomposition, ArrayList<Integer> primaryKeyNo, boolean firstExists) {
+        Set<String> primaryKey = pKey;
+        if (firstExists && !decomposition.get(0).containsAll(pKey)) {
+            for (Set<String> key : candidateKey) {
+                if (decomposition.get(0).containsAll(key)) {
+                    primaryKey = key;
+                    pKeyLabel.setText(primaryKey.toString());
+                    break;
+                }
+            }
+        }
+        StringBuilder result = new StringBuilder("<html>Decomposition: <br>");
+        int initialI = 0;
+        if (firstExists) {
+            for (String key : primaryKey) {
+                if (!decomposition.get(0).contains(key)) {
+                    decomposition.get(0).add(key);
+                }
+            }
+            result.append("R1(");
+            for (String s : decomposition.get(0)) {
+                if (primaryKey.contains(s)) {
+                    result.append("<u>").append(s).append("</u>, ");
+                } else {
+                    result.append(s).append(", ");
+                }
+            }
+            result.delete(result.lastIndexOf(","), result.lastIndexOf(" ") + 1);
+            result.append(")<br>");
+            initialI = 1;
+        } else {
+            decomposition.add(new ArrayList<>(primaryKey));
+            primaryKeyNo.add(primaryKey.size());
+        }
+        for (int i = initialI; i < decomposition.size(); i++) {
+            result.append("R").append(i + 1).append("(");
+            ArrayList<String> dec = decomposition.get(i);
+            int j = 0;
+            for (String e : dec) {
+                if (j < primaryKeyNo.get(i - initialI)) {
+                    result.append("<u>").append(e).append("</u>, ");
+
+                } else {
+                    result.append(e).append(", ");
+                }
+                j++;
+
+            }
+            result.delete(result.lastIndexOf(","), result.lastIndexOf(" ") + 1);
+            result.append(")<br>");
+        }
+        result.append("</html>");
+        return result.toString();
+    }
+
+    private void minimalCover() {
+        for (int i = 0; i < fdX.size(); i++) {
+            Set<String> x = fdX.get(i);
+            Set<String> y = fdY.get(i);
+            difference(y, x);
+
+            for (int j = 0; j < fdX.size(); j++) {
+                if (i != j) {
+                    Set<String> xn = fdX.get(j);
+                    Set<String> yn = fdY.get(j);
+                    if (x.equals(xn)) {
+                        y.addAll(yn);
+                        fdX.remove(j);
+                        fdY.remove(j);
+                        j--;
+                    } else if (x.containsAll(xn) && y.equals(yn)) {
+                        fdX.remove(i);
+                        fdY.remove(i);
+                        j--;
+                    } else if (x.containsAll(xn) && y.containsAll(yn)) {
+                        y.removeAll(yn);
+                    }
+                }
+            }
+        }
+    }
+
+    private Set<String> dependencies(Set<String> left) {
+        Set<String> res = new HashSet<>();
+        for (int i = 0; i < fdX.size(); i++) {
+            Set<String> x = fdX.get(i);
+            Set<String> y = fdY.get(i);
+            if (x.containsAll(left)) {
+                res.addAll(y);
+            }
+        }
+        return res;
     }
 
     private Set<Set<String>> findCandidateKeys(Set<String> remainingSet) {
@@ -367,5 +533,13 @@ public class Module1 extends BackgroundPanel {
         JOptionPane.showMessageDialog(null, msg);
         mainFrame.getRootPane().setDefaultButton(goButton);
         attrCountField.requestFocusInWindow();
+    }
+
+    private void difference(Set<String> s1, Set<String> s2) {
+        for (String s : s2) {
+            if (s1.contains(s)) {
+                s1.remove(s);
+            }
+        }
     }
 }
