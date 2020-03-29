@@ -267,19 +267,28 @@ public class Module1 extends BackgroundPanel {
     private String findNF(Set<Set<String>> candidateKey) {
         int result = 4;
         for (int i = 0; i < fdX.size(); i++) {
-            Set<String> entry = fdX.get(i);
-            if (!candidateKey.contains(entry)) {
+            Set<String> X = fdX.get(i);
+            if (!candidateKey.contains(X)) {
+                boolean bigX = false; // check for fdX itself is greater than candidate key i.e redundant fdX
                 result = 1;
                 boolean xFound = false, yFound = false;
 
                 // Checking whether X or Y part of FD is part of CKey :
                 for (Set<String> set : candidateKey) {
-                    if (!xFound && set.containsAll(entry)) {
+                    if (X.containsAll(set)) {
+                        bigX = true;
+                        break;
+                    }
+                    if (!xFound && set.containsAll(X)) {
                         xFound = true;
                     }
                     if (!yFound && set.containsAll(fdY.get(i))) {
                         yFound = true;
                     }
+                }
+                if (bigX) {
+                    result = 4;
+                    continue;
                 }
                 if (!xFound && yFound) {
                     result = 3;
