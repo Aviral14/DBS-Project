@@ -381,7 +381,10 @@ public class Module1 extends BackgroundPanel {
                 }
             }
         }
-
+        if (decomposition.get(0).size() == 1) {
+            decomposition.remove(0);
+            firstExists = false;
+        }
         return getDecompositionString(decomposition, primaryKeyNo, firstExists);
 //        return "<html><u>Hi</u><html>";
     }
@@ -416,7 +419,7 @@ public class Module1 extends BackgroundPanel {
             result.delete(result.lastIndexOf(","), result.lastIndexOf(" ") + 1);
             result.append(")<br>");
             initialI = 1;
-        } else {
+        } else if (primaryKey.size() > 1) {
             decomposition.add(new ArrayList<>(primaryKey));
             primaryKeyNo.add(primaryKey.size());
         }
