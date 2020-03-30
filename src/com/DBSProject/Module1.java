@@ -22,6 +22,7 @@ public class Module1 extends BackgroundPanel {
     private RoundButton decompositionButton;
     private Set<String> attributes;
     private RoundButton goButton;
+    private List<Integer> nFList;
 
     public Module1() {
         framePanel = this;
@@ -269,8 +270,10 @@ public class Module1 extends BackgroundPanel {
     }
 
     private String findNF(Set<Set<String>> candidateKey) {
-        int result = 4;
+        nFList = new ArrayList<>();
+        int min = 4;
         for (int i = 0; i < fdX.size(); i++) {
+            int result = 4;
             Set<String> X = fdX.get(i);
             if (!candidateKey.contains(X)) {
                 boolean bigX = false; // check for fdX itself is greater than candidate key i.e redundant fdX
@@ -291,20 +294,24 @@ public class Module1 extends BackgroundPanel {
                     }
                 }
                 if (bigX) {
-                    result = 4;
+                    nFList.add(4);
                     continue;
                 }
-                if (!xFound && yFound) {
+                if (yFound) {
                     result = 3;
                 } else if (!xFound) {
                     result = 2;
                 }
+                if (result < min)
+                   min = result;
+                nFList.add(result);
             }
+            nFList.add(result);
         }
-        if (result == 4) {
+        if (min == 4)
             return "BCNF";
-        }
-        return result + "NF";
+        else
+            return min + "NF";
     }
 
     private Set<Set<String>> findCandidateKeys(Set<String> remainingSet) {
