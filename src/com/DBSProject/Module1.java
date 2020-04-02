@@ -285,41 +285,36 @@ public class Module1 extends BackgroundPanel {
     private String findNF(Set<Set<String>> candidateKey) {
         nFList = new ArrayList<>();
         int min = 4;
+        Set<String> keyAttributes = new HashSet<>();
+        for (Set<String> s : candidateKey)
+            keyAttributes.addAll(s);
 
         for (int i = 0; i < fdX.size(); i++) {
             int result = 4;
             Set<String> X = fdX.get(i);
             if (!candidateKey.contains(X)) {
-                boolean bigX = false; // check for fdX itself is greater than candidate key i.e redundant fdX
                 result = 1;
-                boolean xFound = false, yFound = false;
 
-                // Checking whether X or Y part of FD is part of CKey :
+                // Checking whether X is a part of CKey :
+                boolean xFound = false, redundantX = false;
                 for (Set<String> set : candidateKey) {
                     if (X.containsAll(set)) {
-                        bigX = true;
+                        redundantX = true;
                         break;
                     }
-                    if (!xFound && set.containsAll(X)) {
+                    if (set.containsAll(X)) {
                         xFound = true;
-                    }
-                    if (!yFound && set.containsAll(fdY.get(i))) {
-                        yFound = true;
+                        break;
                     }
                 }
-                if (bigX) {
-                    nFList.add(4);
-                    System.out.println(4);
-                    continue;
-                }
-                if (yFound) {
+                if (redundantX) {
+                    result = 4;
+                } else if (keyAttributes.containsAll(fdY.get(i))) {
                     result = 3;
                 } else if (!xFound) {
                     result = 2;
                 }
-                if (result < min)
-                   min = result;
-//                nFList.add(result);
+                if (result < min) min = result;
             }
             nFList.add(result);
             System.out.println(result);
@@ -395,12 +390,14 @@ public class Module1 extends BackgroundPanel {
             for (Set<String> key : candidateKey) {
                 if (decomposition.get(0).containsAll(key)) {
                     primaryKey = key;
-                    pKeyLabel.setText(primaryKey.toString());
+                    pKeyLabel.setText("PKey - " + primaryKey.toString());
                     break;
                 }
             }
         }
-        StringBuilder result = new StringBuilder("<html>Decomposition: <br>");
+        int n = (Collections.min(nFList));
+        String x = (n == 3) ? "BCNF" : ((n + 1) + "NF");
+        StringBuilder result = new StringBuilder("<html>Decomposition to " + x + ": <br>");
         int initialI = 0;
         if (firstExists) {
             for (String key : primaryKey) {
