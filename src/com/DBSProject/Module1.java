@@ -420,6 +420,25 @@ public class Module1 extends BackgroundPanel {
             decomposition.add(new ArrayList<>(primaryKey));
             primaryKeyNo.add(primaryKey.size());
         }
+
+        // Remove redundant tables
+        for (int i = 0, limit = decomposition.size(); i < limit; i++) {
+            for (int j = 0; j < limit; j++) {
+                if (i != j && decomposition.get(i).containsAll(decomposition.get(j))) {
+                    decomposition.remove(j);
+                    if (firstExists) {
+                        primaryKeyNo.remove(j - 1);
+                    } else {
+                        primaryKeyNo.remove(j);
+                    }
+                    if (i >= j) {
+                        i--;
+                    }
+                    j--;
+                    limit--;
+                }
+            }
+        }
         for (int i = initialI; i < decomposition.size(); i++) {
             result.append("R").append(i + 1).append("(");
             ArrayList<String> dec = decomposition.get(i);
