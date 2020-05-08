@@ -19,7 +19,6 @@ public class MainFrame extends JFrame {
         Shape shape = new RoundRectangle2D.Float(0, 0, frameWidth, frameHeight, 25, 25);
         setShape(shape);
 
-
         // Fix size and center on screen
         setResizable(false);
         setLocationRelativeTo(null);
@@ -41,16 +40,17 @@ public class MainFrame extends JFrame {
     }
 }
 
-class MainPanel extends BackgroundPanel{
+class MainPanel extends BackgroundPanel {
 
     public MainPanel() {
         framePanel = this;
-        RoundButton[] modules = new RoundButton[3];
+        RoundButton[] modules = new RoundButton[2];
         JLabel jLabel = new JLabel("<html>DBS<br/>Project</html>");
 
         int temp = (frameHeight - 250) / 2;
-        for (int i = 0; i < 3; i++) {
-            modules[i] = new RoundButton("Module " + (i + 1), frameWidth - 300, temp + 100*(i), 200, 50, 25, Color.WHITE, blueColor, true);
+        for (int i = 0; i < 2; i++) {
+            modules[i] = new RoundButton("Module " + (i + 1), frameWidth - 300, temp + 100 * (i), 200, 50, 25,
+                    Color.WHITE, blueColor, true);
             add(modules[i]);
 
             int finalI = i;
@@ -78,16 +78,12 @@ class MainPanel extends BackgroundPanel{
     }
 
     private void addModule(int x) {
-        switch(x) {
+        switch (x) {
             case 1:
                 mainFrame.add(new Module1());
                 break;
             case 2:
                 mainFrame.add(new Module2());
-                break;
-            case 3:
-                mainFrame.add(new Module3());
         }
     }
 }
-
