@@ -34,8 +34,8 @@ public class Module2 extends BackgroundPanel {
         });
         add(back);
         add(heading);
-        add(new RectangleShape(100, 90, (frameWidth - 200), 350, Color.WHITE, 0.2f));
-        add(new RectangleShape(100, 450, (frameWidth - 200), 425, Color.WHITE, 0.2f));
+        add(new RectangleShape(100, 90, (frameWidth - 200), 150, Color.WHITE, 0.2f));
+        add(new RectangleShape(100, 250, (frameWidth - 200), 425, Color.WHITE, 0.2f));
 
         addIOComponents();
 
@@ -49,33 +49,33 @@ public class Module2 extends BackgroundPanel {
         keyLabel.setFont(new Font(getName(), Font.BOLD, 20));
         keyLabel.setForeground(Color.white);
         keyLabel.setBounds(150, 100, 400, 20);
-        insertButton = new RoundButton("Insert Key", 500, 100, 100, 40, 5, Color.white, blueColor, false);
-        insertButton.setFont(new Font(getName(), Font.BOLD, 10));
-        searchButton = new RoundButton("Search key", 600, 100, 100, 40, 5, Color.white, blueColor, false);
-        searchButton.setFont(new Font(getName(), Font.BOLD, 10));
-        keyField = new RoundTextField(420, 100, 60, 20, 10, Color.RED, Color.green, false);
+        insertButton = new RoundButton("Insert Key", 200, 175, 100, 40, 5, Color.white, blueColor, false);
+        insertButton.setFont(new Font(getName(), Font.BOLD, 12));
+        searchButton = new RoundButton("Search key", 325, 175, 100, 40, 5, Color.white, blueColor, false);
+        searchButton.setFont(new Font(getName(), Font.BOLD, 12));
+        keyField = new RoundTextField(370, 100, 60, 20, 10, Color.RED, Color.green, false);
         keyField.setCaretColor(Color.white);
         add(insertButton);
         add(searchButton);
         add(keyLabel);
         add(keyField);
 
-        RoundButton resultButton = new RoundButton("<html>Fetch<br/>Result</html>", 950, 280, 140, 60, 25, Color.WHITE,
+        RoundButton resultButton = new RoundButton("<html>Fetch<br/>Result</html>", 500, 125, 140, 60, 25, Color.WHITE,
                 Color.decode("#3d52e3"), true);
         add(resultButton);
         JLabel resultLabel = new JLabel("<html>▸ &ensp; <u>Result →</u></html>");
         resultLabel.setFont(new Font(getName(), Font.BOLD, 20));
         resultLabel.setForeground(Color.GREEN);
-        resultLabel.setBounds(150, 460, 200, 25);
+        resultLabel.setBounds(150, 260, 200, 25);
         JLabel gDepthLabel = new JLabel("GDepth");
         gDepthLabel.setFont(new Font(getName(), Font.BOLD, 20));
         gDepthLabel.setForeground(Color.white);
-        gDepthLabel.setBounds(200, 495, 700, 25);
+        gDepthLabel.setBounds(200, 295, 700, 25);
         resultArea = new JTextArea();
         ;
         JTextArea display = new JTextArea(16, 58);
         display.setEditable(false); // set textArea non-editable
-        display.setBounds(200, 545, 700, 150);
+        display.setBounds(200, 345, 700, 150);
         display.setFont(new Font(getName(), Font.BOLD, 20));
         display.setForeground(Color.white);
         display.setOpaque(false);
