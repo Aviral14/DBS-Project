@@ -71,28 +71,38 @@ public class Module2 extends BackgroundPanel {
         gDepthLabel.setFont(new Font(getName(), Font.BOLD, 20));
         gDepthLabel.setForeground(Color.white);
         gDepthLabel.setBounds(200, 495, 700, 25);
-        JTextArea resultArea = new JTextArea();
-        resultArea.setEditable(true);
-        resultArea.setFont(new Font(getName(), Font.BOLD, 20));
-        resultArea.setForeground(Color.white);
-        resultArea.setOpaque(false);
-        resultArea.setBackground(new Color(0, 0, 0, 0));
-        resultArea.setCaretColor(Color.WHITE);
-        resultArea.setMargin(new Insets(10, 10, 10, 10));
-        resultArea.setBounds(200, 545, 700, 25);
+        resultArea = new JTextArea();
+        ;
+        JTextArea display = new JTextArea(16, 58);
+        display.setEditable(false); // set textArea non-editable
+        display.setBounds(200, 545, 700, 150);
+        display.setFont(new Font(getName(), Font.BOLD, 20));
+        display.setForeground(Color.white);
+        display.setOpaque(false);
+        display.setBackground(new Color(0, 0, 0, 0));
+        display.setCaretColor(Color.WHITE);
+        display.setMargin(new Insets(10, 10, 10, 10));
+        JScrollPane scrollPane = new JScrollPane(display, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.getViewport().setOpaque(false);
+        scrollPane.setOpaque(false);
+        scrollPane.setBorder(new LineBorder(Color.WHITE, 2, true));
         add(resultLabel);
+        add(display);
+        add(scrollPane);
         add(gDepthLabel);
         add(resultArea);
         resultLabel.setVisible(false);
         gDepthLabel.setVisible(false);
         resultArea.setVisible(false);
+        display.setVisible(false);
         resultButton.addActionListener(e -> {
             gDepthLabel.setText("Global Depth - " + dir.globalDepth);
-            String result = getResult(false).toString();
-            resultArea.setText(result);
+            String ans = getResult(false);
+            display.setText(ans);
             resultLabel.setVisible(true);
-            resultArea.setVisible(true);
             gDepthLabel.setVisible(true);
+            display.setVisible(true);
         });
 
         insertButton.addActionListener(e -> {
@@ -132,27 +142,26 @@ public class Module2 extends BackgroundPanel {
 
     // duplicates will be used to incase the bucket is not split and we then want to
     // print it as different or not
-    private StringBuilder getResult(boolean duplicates) {
-        String str;
+    private String getResult(boolean duplicates) {
+        String str, res;
         // this set is used to mark if a particular value has been printed before
         // this will have no significance if we are printing duplicates
         HashSet<String> displayed = new HashSet<String>();
-        StringBuilder bucketResultString = new StringBuilder("<html>");
+        res = "";
         for (int i = 0; i < dir.buckets.size(); ++i) {
             int extra = dir.buckets.get(i).getDepth();
             str = dir.bucketID(i);
             if (duplicates || !displayed.contains(str)) {
                 displayed.add(str);
-                bucketResultString.append(str + " => ");
+                res += str + " => ";
                 Iterator<Integer> it = dir.buckets.get(i).values.iterator();
                 while (it.hasNext()) {
-                    bucketResultString.append(it.next() + " ");
+                    res += it.next() + " ";
                 }
+                res += "\n";
             }
-            bucketResultString.append("<br>");
         }
-        bucketResultString.append("<html/>");
-        return bucketResultString;
+        return res;
     }
 }
 
