@@ -1,16 +1,15 @@
 package com.DBSProject;
 
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.util.*;
 
 import static com.DBSProject.CommonConstants.*;
 
 public class Module2 extends BackgroundPanel {
-    private JTextArea resultArea;
     private RoundTextField keyField;
     private RoundButton insertButton;
-    private RoundButton searchButton;
     private Directory dir;
 
     public Module2() {
@@ -42,10 +41,10 @@ public class Module2 extends BackgroundPanel {
         add(new RectangleShape(100, 120, (frameWidth - 200), 150, Color.WHITE, 0.2f));
         add(new RectangleShape(100, 280, (frameWidth - 200), 425, Color.WHITE, 0.2f));
 
-        addIOComponents();
+        addIOComponents(framePanel);
     }
 
-    private void addIOComponents() {
+    private void addIOComponents(JPanel FramePanel) {
         JLabel keyLabel = new JLabel("▸   Key Value: ");
         keyLabel.setFont(new Font(getName(), Font.BOLD, 20));
         keyLabel.setForeground(Color.white);
@@ -54,7 +53,7 @@ public class Module2 extends BackgroundPanel {
         keyField.setCaretColor(Color.white);
         insertButton = new RoundButton("Insert Key", 200, 205, 100, 40, 5, Color.white, blueColor, false);
         insertButton.setFont(new Font(getName(), Font.BOLD, 12));
-        searchButton = new RoundButton("Search key", 325, 205, 100, 40, 5, Color.white, blueColor, false);
+        RoundButton searchButton = new RoundButton("Search key", 325, 205, 100, 40, 5, Color.white, blueColor, false);
         searchButton.setFont(new Font(getName(), Font.BOLD, 12));
 
         add(insertButton);
@@ -62,8 +61,6 @@ public class Module2 extends BackgroundPanel {
         add(keyLabel);
         add(keyField);
 
-        RoundButton resultButton = new RoundButton("<html>Fetch<br/>Result</html>", 500, 155, 140, 60, 25, Color.WHITE,
-                Color.decode("#3d52e3"), true);
         JLabel resultLabel = new JLabel("<html>▸ &ensp; <u>Result →</u></html>");
         resultLabel.setFont(new Font(getName(), Font.BOLD, 20));
         resultLabel.setForeground(Color.GREEN);
@@ -72,24 +69,28 @@ public class Module2 extends BackgroundPanel {
         gDepthLabel.setFont(new Font(getName(), Font.BOLD, 20));
         gDepthLabel.setForeground(Color.white);
         gDepthLabel.setBounds(200, 325, 700, 25);
-        resultArea = new JTextArea();
-        JTextArea display = new JTextArea(16, 58);
-        display.setEditable(false); // set textArea non-editable
-        display.setBounds(200, 375, 700, 150);
+        JTextArea display = new JTextArea();
+        display.setEditable(false);
+        display.setBounds(200, 375, 700, 250);
         display.setFont(new Font(getName(), Font.BOLD, 20));
         display.setForeground(Color.white);
         display.setOpaque(false);
         display.setBackground(new Color(0, 0, 0, 0));
         display.setCaretColor(Color.WHITE);
         display.setMargin(new Insets(10, 10, 10, 10));
+
+        JScrollPane scrollPane = new JScrollPane(display, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.getViewport().setOpaque(false);
+        scrollPane.setOpaque(false);
+        scrollPane.setBorder(new LineBorder(Color.WHITE, 2, true));
+
         add(resultLabel);
         add(display);
         add(gDepthLabel);
-        add(resultArea);
-        add(resultButton);
+        add(scrollPane);
         resultLabel.setVisible(false);
         gDepthLabel.setVisible(false);
-        resultArea.setVisible(false);
         display.setVisible(false);
 
         insertButton.addActionListener(e -> {
@@ -104,6 +105,16 @@ public class Module2 extends BackgroundPanel {
             } catch (NumberFormatException er) {
                 showMsgPopUp("Please enter a valid integer!");
             }
+            gDepthLabel.setText("Global Depth - " + dir.globalDepth);
+            String ans = getResult(false);
+            scrollPane.setViewportView(display);
+            scrollPane.getPreferredSize();
+            scrollPane.setBounds(200, 375, 700, 250);
+            display.setText(ans);
+            resultLabel.setVisible(true);
+            gDepthLabel.setVisible(true);
+            display.setVisible(true);
+            scrollPane.setVisible(true);
         });
 
         searchButton.addActionListener(e -> {
@@ -118,15 +129,6 @@ public class Module2 extends BackgroundPanel {
             } catch (NumberFormatException er) {
                 showMsgPopUp("Please enter a valid integer!");
             }
-        });
-
-        resultButton.addActionListener(e -> {
-            gDepthLabel.setText("Global Depth - " + dir.globalDepth);
-            String ans = getResult(false);
-            display.setText(ans);
-            resultLabel.setVisible(true);
-            gDepthLabel.setVisible(true);
-            display.setVisible(true);
         });
     }
 
