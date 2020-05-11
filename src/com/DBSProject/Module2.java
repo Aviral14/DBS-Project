@@ -1,30 +1,34 @@
 package com.DBSProject;
 
 import javax.swing.*;
-import javax.swing.border.LineBorder;
 import java.awt.*;
-import java.text.NumberFormat;
 import java.util.*;
 
 import static com.DBSProject.CommonConstants.*;
 
 public class Module2 extends BackgroundPanel {
-    private JLabel gDepthLabel;
     private JTextArea resultArea;
     private RoundTextField keyField;
     private RoundButton insertButton;
     private RoundButton searchButton;
-    private RoundButton displayButton;
-    private JScrollPane scrollPane;
     private Directory dir;
 
     public Module2() {
+        // Directory init
+        int bfr = 3, globalDepth = 1;
+        dir = new Directory(globalDepth, bfr);
+
+        // GUI init
         framePanel = this;
 
         JLabel heading = new JLabel("<html><u>Extendible Hashing Simulation</u></html>");
         heading.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 25));
         heading.setBounds(100, 20, 1100, 80);
         heading.setForeground(Color.WHITE);
+        JLabel subHeading = new JLabel("<html>Directory has been created with global depth=1 and bfr=3</html>");
+        subHeading.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 15));
+        subHeading.setBounds(100, 50, 1100, 80);
+        subHeading.setForeground(Color.WHITE);
         RoundButton back = new RoundButton("←", 10, 10, 50, 25, 10, Color.white, blueColor, true);
         back.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 15));
         back.addActionListener(e -> {
@@ -34,88 +38,71 @@ public class Module2 extends BackgroundPanel {
         });
         add(back);
         add(heading);
-        add(new RectangleShape(100, 90, (frameWidth - 200), 150, Color.WHITE, 0.2f));
-        add(new RectangleShape(100, 250, (frameWidth - 200), 425, Color.WHITE, 0.2f));
+        add(subHeading);
+        add(new RectangleShape(100, 120, (frameWidth - 200), 150, Color.WHITE, 0.2f));
+        add(new RectangleShape(100, 280, (frameWidth - 200), 425, Color.WHITE, 0.2f));
 
         addIOComponents();
-
-        int bfr = 3, globalDepth = 1;
-        dir = new Directory(globalDepth, bfr);
-        System.out.println("Directory has been created with global depth=1 and bfr=3");
     }
 
     private void addIOComponents() {
         JLabel keyLabel = new JLabel("▸   Key Value: ");
         keyLabel.setFont(new Font(getName(), Font.BOLD, 20));
         keyLabel.setForeground(Color.white);
-        keyLabel.setBounds(150, 100, 400, 20);
-        insertButton = new RoundButton("Insert Key", 200, 175, 100, 40, 5, Color.white, blueColor, false);
-        insertButton.setFont(new Font(getName(), Font.BOLD, 12));
-        searchButton = new RoundButton("Search key", 325, 175, 100, 40, 5, Color.white, blueColor, false);
-        searchButton.setFont(new Font(getName(), Font.BOLD, 12));
-        keyField = new RoundTextField(370, 100, 60, 20, 10, Color.RED, Color.green, false);
+        keyLabel.setBounds(150, 130, 400, 20);
+        keyField = new RoundTextField(370, 130, 60, 20, 10, Color.RED, Color.green, false);
         keyField.setCaretColor(Color.white);
+        insertButton = new RoundButton("Insert Key", 200, 205, 100, 40, 5, Color.white, blueColor, false);
+        insertButton.setFont(new Font(getName(), Font.BOLD, 12));
+        searchButton = new RoundButton("Search key", 325, 205, 100, 40, 5, Color.white, blueColor, false);
+        searchButton.setFont(new Font(getName(), Font.BOLD, 12));
+
         add(insertButton);
         add(searchButton);
         add(keyLabel);
         add(keyField);
 
-        RoundButton resultButton = new RoundButton("<html>Fetch<br/>Result</html>", 500, 125, 140, 60, 25, Color.WHITE,
+        RoundButton resultButton = new RoundButton("<html>Fetch<br/>Result</html>", 500, 155, 140, 60, 25, Color.WHITE,
                 Color.decode("#3d52e3"), true);
-        add(resultButton);
         JLabel resultLabel = new JLabel("<html>▸ &ensp; <u>Result →</u></html>");
         resultLabel.setFont(new Font(getName(), Font.BOLD, 20));
         resultLabel.setForeground(Color.GREEN);
-        resultLabel.setBounds(150, 260, 200, 25);
+        resultLabel.setBounds(150, 290, 200, 25);
         JLabel gDepthLabel = new JLabel("GDepth");
         gDepthLabel.setFont(new Font(getName(), Font.BOLD, 20));
         gDepthLabel.setForeground(Color.white);
-        gDepthLabel.setBounds(200, 295, 700, 25);
+        gDepthLabel.setBounds(200, 325, 700, 25);
         resultArea = new JTextArea();
-        ;
         JTextArea display = new JTextArea(16, 58);
         display.setEditable(false); // set textArea non-editable
-        display.setBounds(200, 345, 700, 150);
+        display.setBounds(200, 375, 700, 150);
         display.setFont(new Font(getName(), Font.BOLD, 20));
         display.setForeground(Color.white);
         display.setOpaque(false);
         display.setBackground(new Color(0, 0, 0, 0));
         display.setCaretColor(Color.WHITE);
         display.setMargin(new Insets(10, 10, 10, 10));
-        JScrollPane scrollPane = new JScrollPane(display, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        scrollPane.getViewport().setOpaque(false);
-        scrollPane.setOpaque(false);
-        scrollPane.setBorder(new LineBorder(Color.WHITE, 2, true));
         add(resultLabel);
         add(display);
-        add(scrollPane);
         add(gDepthLabel);
         add(resultArea);
+        add(resultButton);
         resultLabel.setVisible(false);
         gDepthLabel.setVisible(false);
         resultArea.setVisible(false);
         display.setVisible(false);
-        resultButton.addActionListener(e -> {
-            gDepthLabel.setText("Global Depth - " + dir.globalDepth);
-            String ans = getResult(false);
-            display.setText(ans);
-            resultLabel.setVisible(true);
-            gDepthLabel.setVisible(true);
-            display.setVisible(true);
-        });
 
         insertButton.addActionListener(e -> {
             try {
                 int value = Integer.parseInt(keyField.getText());
                 try {
                     String msg = dir.insert(value, false);
-                    showErrorPopUp(msg);
+                    showMsgPopUp(msg);
                 } catch (InputMismatchException err) {
-                    showErrorPopUp("Please enter a valid integer!");
+                    showMsgPopUp("Please enter a valid integer!");
                 }
             } catch (NumberFormatException er) {
-                showErrorPopUp("Please enter a valid integer!");
+                showMsgPopUp("Please enter a valid integer!");
             }
         });
 
@@ -124,17 +111,26 @@ public class Module2 extends BackgroundPanel {
                 int value = Integer.parseInt(keyField.getText());
                 try {
                     String msg = dir.search(value);
-                    showErrorPopUp(msg);
+                    showMsgPopUp(msg);
                 } catch (InputMismatchException err) {
-                    showErrorPopUp("Please enter a valid integer!");
+                    showMsgPopUp("Please enter a valid integer!");
                 }
             } catch (NumberFormatException er) {
-                showErrorPopUp("Please enter a valid integer!");
+                showMsgPopUp("Please enter a valid integer!");
             }
+        });
+
+        resultButton.addActionListener(e -> {
+            gDepthLabel.setText("Global Depth - " + dir.globalDepth);
+            String ans = getResult(false);
+            display.setText(ans);
+            resultLabel.setVisible(true);
+            gDepthLabel.setVisible(true);
+            display.setVisible(true);
         });
     }
 
-    private void showErrorPopUp(String msg) {
+    private void showMsgPopUp(String msg) {
         JOptionPane.showMessageDialog(null, msg);
         mainFrame.getRootPane().setDefaultButton(insertButton);
         keyField.requestFocusInWindow();
@@ -149,7 +145,6 @@ public class Module2 extends BackgroundPanel {
         HashSet<String> displayed = new HashSet<String>();
         res = "";
         for (int i = 0; i < dir.buckets.size(); ++i) {
-            int extra = dir.buckets.get(i).getDepth();
             str = dir.bucketID(i);
             if (duplicates || !displayed.contains(str)) {
                 displayed.add(str);
