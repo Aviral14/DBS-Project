@@ -220,8 +220,7 @@ class Directory {
     // and then we check that bucket
     String search(int key) {
         int bucketNumber = hashFunction(key);
-        System.out.println("Searching key " + key + " in bucket " + bucketID(bucketNumber));
-        return buckets.get(bucketNumber).search(key);
+        return buckets.get(bucketNumber).search(key, bucketID(bucketNumber));
     }
 
     int hashFunction(int n) {
@@ -323,10 +322,10 @@ class BUCKET {
     }
 
     // searching in that bucket
-    String search(int key) {
+    String search(int key, String bucket) {
         String msg = null;
         if (values.contains(key)) {
-            msg = "Key exists in a bucket";
+            msg = "Key exists in a bucket " + bucket;
         } else {
             msg = "This key does not exists";
         }
