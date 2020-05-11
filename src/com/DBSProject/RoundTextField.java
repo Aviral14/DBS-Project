@@ -4,9 +4,9 @@ import javax.swing.*;
 import java.awt.*;
 
 public class RoundTextField extends JTextField {
-    private int radius;
-    private Color backColor;
-    private boolean backGround;
+    private final int radius;
+    private final Color backColor;
+    private final boolean backGround;
 
     public RoundTextField(int x, int y, int w, int h, int r, Color fColor, Color bColor, boolean backGround) {
         radius = r;

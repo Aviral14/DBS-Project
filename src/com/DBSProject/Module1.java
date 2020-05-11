@@ -41,8 +41,8 @@ public class Module1 extends BackgroundPanel {
             mainFrame.add(new MainPanel());
             mainFrame.repaint();
         });
-        JLabel warning1 = new JLabel("<html>&#9432; &ensp; <b>By default, name of attributes are A, B, C..., but you can change as per your wish</b></html>");
-        JLabel warning2 = new JLabel("<html>&#9432; &ensp; <b>Please enter FDs in format: &ensp; A,B->C,D &ensp; :ignore white_spaces, each per line !</b></html>");
+        JLabel warning1 = new JLabel("<html>&#9432; &ensp; <b>By default, names of attributes are A, B, C..., but you can change as per your wish</b></html>");
+        JLabel warning2 = new JLabel("<html>&#9432; &ensp; <b>Please enter FDs in format: A,B->C,D :ignoring whitespaces, one per line</b></html>");
         warning1.setForeground(Color.green);
         warning2.setForeground(Color.green);
         warning1.setBounds(120, frameHeight - 75, 1000, 25);
@@ -141,37 +141,11 @@ public class Module1 extends BackgroundPanel {
                     framePanel.repaint(150, 125, frameWidth - 300, 315);
                     textArea.requestFocusInWindow();
                 } else {
-                    if (attrNameField != null) {
-                        fDSetLabel.setBounds(0, 0, 0, 0);
-                        scrollPane.setBounds(0, 0, 0, 0);
-                        textArea.setBounds(0, 0, 0, 0);
-                        for (RoundTextField roundTextField : attrNameField) framePanel.remove(roundTextField);
-                        resultLabel.setVisible(false);
-                        pKeyLabel.setVisible(false);
-                        cKeyLabel.setVisible(false);
-                        cKeyScroll.setVisible(false);
-                        highestNF.setVisible(false);
-                        resultButton.setVisible(false);
-                        scrollPaneDecomposition.setVisible(false);
-                        framePanel.repaint(150, 125, frameWidth - 300, 315);
-                    }
+                    setBoundsAndVisiblity(textArea, scrollPaneDecomposition, resultButton);
                     showErrorPopUp("Attribute count must be in range [1, 18] !");
                 }
             } catch (NumberFormatException nfe) {
-                if (attrNameField != null) {
-                    fDSetLabel.setBounds(0, 0, 0, 0);
-                    scrollPane.setBounds(0, 0, 0, 0);
-                    textArea.setBounds(0, 0, 0, 0);
-                    for (RoundTextField roundTextField : attrNameField) framePanel.remove(roundTextField);
-                    resultLabel.setVisible(false);
-                    pKeyLabel.setVisible(false);
-                    cKeyLabel.setVisible(false);
-                    cKeyScroll.setVisible(false);
-                    highestNF.setVisible(false);
-                    resultButton.setVisible(false);
-                    scrollPaneDecomposition.setVisible(false);
-                    framePanel.repaint(150, 125, frameWidth - 300, 315);
-                }
+                setBoundsAndVisiblity(textArea, scrollPaneDecomposition, resultButton);
                 showErrorPopUp("Please enter a valid 'Number' in range [1, 18] !");
             }
         });
@@ -180,11 +154,11 @@ public class Module1 extends BackgroundPanel {
         resultLabel.setFont(new Font(getName(), Font.BOLD, 20));
         resultLabel.setForeground(Color.GREEN);
         resultLabel.setBounds(150, 460, 200, 25);
-        pKeyLabel = new JLabel("PKey");
+        pKeyLabel = new JLabel("Primary key: ");
         pKeyLabel.setFont(new Font(getName(), Font.BOLD, 20));
         pKeyLabel.setForeground(Color.white);
         pKeyLabel.setBounds(200, 495, 700, 25);
-        cKeyLabel = new JLabel("CKey");
+        cKeyLabel = new JLabel("Candidate keys: ");
         cKeyLabel.setFont(new Font(getName(), Font.BOLD, 20));
         cKeyLabel.setForeground(Color.white);
         cKeyScroll = new JScrollPane(cKeyLabel, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -193,7 +167,7 @@ public class Module1 extends BackgroundPanel {
         cKeyScroll.setOpaque(false);
         cKeyScroll.setBorder(BorderFactory.createEmptyBorder());
         cKeyScroll.getHorizontalScrollBar().setPreferredSize(new Dimension(0, 8));
-        highestNF = new JLabel("NF");
+        highestNF = new JLabel("Normal form: ");
         highestNF.setFont(new Font(getName(), Font.BOLD, 20));
         highestNF.setForeground(Color.white);
         highestNF.setBounds(200, 575, 700, 25);
@@ -213,9 +187,9 @@ public class Module1 extends BackgroundPanel {
             try {
                 checkFDValidity(textArea);
                 String[] resultArray = findResult();
-                pKeyLabel.setText("PKey - " + resultArray[0]);
-                cKeyLabel.setText("CKey - " + resultArray[1]);
-                highestNF.setText("NF - " + resultArray[2]);
+                pKeyLabel.setText("Primary key: " + resultArray[0]);
+                cKeyLabel.setText("Candidate keys: " + resultArray[1]);
+                highestNF.setText("Normal form: " + resultArray[2]);
                 decompositionLabel.setText(getDecomposition());
                 resultLabel.setVisible(true);
                 pKeyLabel.setVisible(true);
@@ -227,6 +201,23 @@ public class Module1 extends BackgroundPanel {
                 showErrorPopUp(ex.getMessage());
             }
         });
+    }
+
+    private void setBoundsAndVisiblity(JTextArea textArea, JScrollPane scrollPaneDecomposition, RoundButton resultButton) {
+        if (attrNameField != null) {
+            fDSetLabel.setBounds(0, 0, 0, 0);
+            scrollPane.setBounds(0, 0, 0, 0);
+            textArea.setBounds(0, 0, 0, 0);
+            for (RoundTextField roundTextField : attrNameField) framePanel.remove(roundTextField);
+            resultLabel.setVisible(false);
+            pKeyLabel.setVisible(false);
+            cKeyLabel.setVisible(false);
+            cKeyScroll.setVisible(false);
+            highestNF.setVisible(false);
+            resultButton.setVisible(false);
+            scrollPaneDecomposition.setVisible(false);
+            framePanel.repaint(150, 125, frameWidth - 300, 315);
+        }
     }
 
     private void checkFDValidity(JTextArea textArea) throws Exception {
@@ -258,11 +249,11 @@ public class Module1 extends BackgroundPanel {
         for (int i = 0; i < fdX.size(); i++) {
             for (String s : fdX.get(i)) {
                 if (!attributes.contains(s))
-                    throw new Exception("FDs are not in proper format !");
+                    throw new Exception("FDs are not in proper format!");
             }
             for (String s : fdY.get(i)) {
                 if (!attributes.contains(s))
-                    throw new Exception("FDs are not in proper format !");
+                    throw new Exception("FDs are not in proper format!");
             }
         }
     }
@@ -342,35 +333,15 @@ public class Module1 extends BackgroundPanel {
             if (nFList.get(i) == currentnf) {
 
                 // Separate lhs and rhs of dependency into separate table
-                decomposition.add(new ArrayList<>());
-                decomposition.get(decomposition.size() - 1).addAll(x);
-                decomposition.get(decomposition.size() - 1).addAll(y);
-                primaryKeyNo.add(x.size());
-                decomposition.get(0).removeAll(y); // Remove rhs from original table to increase nf
-//                for (String s : dependent) {
-//                    if (decomposition.get(0).contains(s)) {
-//                        remove = false;
-//                    }
-//                }
-//                if (remove) {
-//                    decomposition.get(0).removeAll(x);
-//                }
-//                if (decomposition.get(0).size() == 0) {
-//                    decomposition.remove(0);
-//                    firstExists = false;
-//                }
+                separateDependencyFromRoot(decomposition, primaryKeyNo, x, y);
+
             } else {
                 // If nf does not need increasing, check for transitive dependency: helps in finding lossless decomposition
                 for (int j = 0; j < fdX.size(); j++) {
                     if (i != j) {
-                        Set<String> xn = fdX.get(j);
                         Set<String> yn = fdY.get(j);
                         if (yn.equals(x)) {
-                            decomposition.add(new ArrayList<>());
-                            decomposition.get(decomposition.size() - 1).addAll(x);
-                            decomposition.get(decomposition.size() - 1).addAll(y);
-                            primaryKeyNo.add(x.size());
-                            decomposition.get(0).removeAll(y);
+                            separateDependencyFromRoot(decomposition, primaryKeyNo, x, y);
                         }
                     }
                 }
@@ -381,7 +352,14 @@ public class Module1 extends BackgroundPanel {
             firstExists = false;
         }
         return getDecompositionString(decomposition, primaryKeyNo, firstExists);
-//        return "<html><u>Hi</u><html>";
+    }
+
+    private void separateDependencyFromRoot(ArrayList<ArrayList<String>> decomposition, ArrayList<Integer> primaryKeyNo, Set<String> x, Set<String> y) {
+        decomposition.add(new ArrayList<>());
+        decomposition.get(decomposition.size() - 1).addAll(x);
+        decomposition.get(decomposition.size() - 1).addAll(y);
+        primaryKeyNo.add(x.size());
+        decomposition.get(0).removeAll(y);
     }
 
     private String getDecompositionString(ArrayList<ArrayList<String>> decomposition, ArrayList<Integer> primaryKeyNo, boolean firstExists) {
@@ -390,7 +368,7 @@ public class Module1 extends BackgroundPanel {
             for (Set<String> key : candidateKey) {
                 if (decomposition.get(0).containsAll(key)) {
                     primaryKey = key;
-                    pKeyLabel.setText("PKey - " + primaryKey.toString());
+                    pKeyLabel.setText("Primary key: " + primaryKey.toString());
                     break;
                 }
             }
@@ -405,7 +383,7 @@ public class Module1 extends BackgroundPanel {
                     decomposition.get(0).add(key);
                 }
             }
-            result.append("R1(");
+            result.append("R1 (");
             for (String s : decomposition.get(0)) {
                 if (primaryKey.contains(s)) {
                     result.append("<u>").append(s).append("</u>, ");
@@ -440,7 +418,7 @@ public class Module1 extends BackgroundPanel {
             }
         }
         for (int i = initialI; i < decomposition.size(); i++) {
-            result.append("R").append(i + 1).append("(");
+            result.append("R").append(i + 1).append(" (");
             ArrayList<String> dec = decomposition.get(i);
             int j = 0;
             for (String e : dec) {
@@ -485,18 +463,6 @@ public class Module1 extends BackgroundPanel {
                 }
             }
         }
-    }
-
-    private Set<String> dependencies(Set<String> left) {
-        Set<String> res = new HashSet<>();
-        for (int i = 0; i < fdX.size(); i++) {
-            Set<String> x = fdX.get(i);
-            Set<String> y = fdY.get(i);
-            if (x.containsAll(left)) {
-                res.addAll(y);
-            }
-        }
-        return res;
     }
 
     private Set<Set<String>> findCandidateKeys(Set<String> remainingSet) {
@@ -556,9 +522,7 @@ public class Module1 extends BackgroundPanel {
 
     private void difference(Set<String> s1, Set<String> s2) {
         for (String s : s2) {
-            if (s1.contains(s)) {
-                s1.remove(s);
-            }
+            s1.remove(s);
         }
     }
 }
