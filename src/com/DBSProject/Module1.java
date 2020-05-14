@@ -1,6 +1,9 @@
 package com.DBSProject;
 
 import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.util.*;
@@ -17,6 +20,7 @@ public class Module1 extends BackgroundPanel {
     private JLabel cKeyLabel;
     private JLabel highestNF;
     private JScrollPane cKeyScroll;
+    private JScrollPane pKeyScroll;
     private List<Set<String>> fdX;
     private List<Set<String>> fdY;
     Set<String> pKey;
@@ -45,8 +49,8 @@ public class Module1 extends BackgroundPanel {
         JLabel warning2 = new JLabel("<html>&#9432; &ensp; <b>Please enter FDs in format: A,B->C,D :ignoring whitespaces, one per line</b></html>");
         warning1.setForeground(Color.green);
         warning2.setForeground(Color.green);
-        warning1.setBounds(120, frameHeight - 75, 1000, 25);
-        warning2.setBounds(120, frameHeight - 45, 1000, 25);
+        warning1.setBounds(120, frameHeight - 70, 1000, 25);
+        warning2.setBounds(120, frameHeight - 40, 1000, 25);
         warning1.setFont(new Font(getName(), Font.BOLD, 20));
         warning2.setFont(new Font(getName(), Font.BOLD, 20));
         add(warning1);
@@ -90,6 +94,9 @@ public class Module1 extends BackgroundPanel {
         decompositionLabel.setOpaque(false);
         decompositionLabel.setBackground(new Color(0, 0, 0, 0));
         decompositionLabel.setVerticalAlignment(SwingConstants.TOP);
+        Border border = decompositionLabel.getBorder();
+        Border margin = new EmptyBorder(10,10,10,10);
+        decompositionLabel.setBorder(new CompoundBorder(border, margin));
         scrollPane = new JScrollPane(textArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scrollPane.getViewport().setOpaque(false);
         scrollPane.setOpaque(false);
@@ -98,7 +105,7 @@ public class Module1 extends BackgroundPanel {
         scrollPaneDecomposition.getViewport().setOpaque(false);
         scrollPaneDecomposition.setOpaque(false);
         scrollPaneDecomposition.setBorder(new LineBorder(Color.WHITE, 2, true));
-        RoundButton resultButton = new RoundButton("<html>Fetch<br/>Result</html>", 950, 280, 140, 60, 25, Color.WHITE, Color.decode("#3d52e3"), true);
+        RoundButton resultButton = new RoundButton("<html>Fetch<br/>Result</html>", 840, 320, 140, 60, 25, Color.WHITE, Color.decode("#3d52e3"), true);
         add(resultButton);
         resultButton.setVisible(false);
         mainFrame.getRootPane().setDefaultButton(goButton);
@@ -113,13 +120,14 @@ public class Module1 extends BackgroundPanel {
                     scrollPane.setBounds(205, 210 + 30 * ((count - 1) / 6), 512, 215 - 30 * ((count - 1) / 6));
                     scrollPane.getVerticalScrollBar().setValue(0);
                     scrollPane.getHorizontalScrollBar().setValue(0);
-                    scrollPaneDecomposition.setBounds(200, 605, 512, 260);
+                    scrollPaneDecomposition.setBounds(200, 625, 800, 240);
                     scrollPaneDecomposition.getVerticalScrollBar().setValue(0);
                     scrollPaneDecomposition.getHorizontalScrollBar().setValue(0);
                     resultLabel.setVisible(false);
                     pKeyLabel.setVisible(false);
                     cKeyLabel.setVisible(false);
                     cKeyScroll.setVisible(false);
+                    pKeyScroll.setVisible(false);
                     highestNF.setVisible(false);
                     scrollPaneDecomposition.setVisible(false);
                     resultButton.setVisible(true);
@@ -135,17 +143,18 @@ public class Module1 extends BackgroundPanel {
                     for (int i = 0; i < count; i++) {
                         attrNameField[i] = new RoundTextField(200 + 134 * (i % 6), 130 + 30 * (i / 6), 120, 25, 10, Color.WHITE, Color.BLACK, false);
                         attrNameField[i].setText(String.valueOf(text++));
+                        attrNameField[i].setCaretColor(Color.WHITE);
                         framePanel.add(attrNameField[i]);
                     }
 
                     framePanel.repaint(150, 125, frameWidth - 300, 315);
                     textArea.requestFocusInWindow();
                 } else {
-                    setBoundsAndVisiblity(textArea, scrollPaneDecomposition, resultButton);
+                    setBoundsAndVisibility(textArea, scrollPaneDecomposition, resultButton);
                     showErrorPopUp("Attribute count must be in range [1, 18] !");
                 }
             } catch (NumberFormatException nfe) {
-                setBoundsAndVisiblity(textArea, scrollPaneDecomposition, resultButton);
+                setBoundsAndVisibility(textArea, scrollPaneDecomposition, resultButton);
                 showErrorPopUp("Please enter a valid 'Number' in range [1, 18] !");
             }
         });
@@ -157,12 +166,17 @@ public class Module1 extends BackgroundPanel {
         pKeyLabel = new JLabel("Primary key: ");
         pKeyLabel.setFont(new Font(getName(), Font.BOLD, 20));
         pKeyLabel.setForeground(Color.white);
-        pKeyLabel.setBounds(200, 495, 700, 25);
+        pKeyScroll = new JScrollPane(pKeyLabel, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        pKeyScroll.setBounds(200, 495, 800, 35);
+        pKeyScroll.getViewport().setOpaque(false);
+        pKeyScroll.setOpaque(false);
+        pKeyScroll.setBorder(BorderFactory.createEmptyBorder());
+        pKeyScroll.getHorizontalScrollBar().setPreferredSize(new Dimension(0, 8));
         cKeyLabel = new JLabel("Candidate keys: ");
         cKeyLabel.setFont(new Font(getName(), Font.BOLD, 20));
         cKeyLabel.setForeground(Color.white);
         cKeyScroll = new JScrollPane(cKeyLabel, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        cKeyScroll.setBounds(200, 530, 700, 35);
+        cKeyScroll.setBounds(200, 540, 800, 35);
         cKeyScroll.getViewport().setOpaque(false);
         cKeyScroll.setOpaque(false);
         cKeyScroll.setBorder(BorderFactory.createEmptyBorder());
@@ -170,9 +184,9 @@ public class Module1 extends BackgroundPanel {
         highestNF = new JLabel("Normal form: ");
         highestNF.setFont(new Font(getName(), Font.BOLD, 20));
         highestNF.setForeground(Color.white);
-        highestNF.setBounds(200, 575, 700, 25);
+        highestNF.setBounds(200, 585, 700, 25);
         add(resultLabel);
-        add(pKeyLabel);
+        add(pKeyScroll);
         add(cKeyScroll);
         add(highestNF);
         add(scrollPaneDecomposition);
@@ -180,6 +194,7 @@ public class Module1 extends BackgroundPanel {
         pKeyLabel.setVisible(false);
         cKeyLabel.setVisible(false);
         cKeyScroll.setVisible(false);
+        pKeyScroll.setVisible(false);
         highestNF.setVisible(false);
         scrollPaneDecomposition.setVisible(false);
 
@@ -195,6 +210,7 @@ public class Module1 extends BackgroundPanel {
                 pKeyLabel.setVisible(true);
                 cKeyLabel.setVisible(true);
                 cKeyScroll.setVisible(true);
+                pKeyScroll.setVisible(true);
                 highestNF.setVisible(true);
                 scrollPaneDecomposition.setVisible(true);
             } catch (Exception ex) {
@@ -203,7 +219,7 @@ public class Module1 extends BackgroundPanel {
         });
     }
 
-    private void setBoundsAndVisiblity(JTextArea textArea, JScrollPane scrollPaneDecomposition, RoundButton resultButton) {
+    private void setBoundsAndVisibility(JTextArea textArea, JScrollPane scrollPaneDecomposition, RoundButton resultButton) {
         if (attrNameField != null) {
             fDSetLabel.setBounds(0, 0, 0, 0);
             scrollPane.setBounds(0, 0, 0, 0);
@@ -213,6 +229,7 @@ public class Module1 extends BackgroundPanel {
             pKeyLabel.setVisible(false);
             cKeyLabel.setVisible(false);
             cKeyScroll.setVisible(false);
+            pKeyScroll.setVisible(false);
             highestNF.setVisible(false);
             resultButton.setVisible(false);
             scrollPaneDecomposition.setVisible(false);
@@ -225,8 +242,9 @@ public class Module1 extends BackgroundPanel {
         for (RoundTextField roundTextField : attrNameField) {
             String temp = roundTextField.getText();
             if (temp.equals(""))
-                throw new Exception("Attribute name should not be empty !");
-            attributes.add(temp);
+                throw new Exception("Attribute name should not be empty!");
+            if (!attributes.add(temp))
+                throw new Exception("Duplicate attributes are not allowed!");
         }
         fdX = new ArrayList<>();
         fdY = new ArrayList<>();
@@ -260,7 +278,7 @@ public class Module1 extends BackgroundPanel {
 
     private String[] findResult() {
         pKey = new HashSet<>();
-        candidateKey = findCandidateKeys(attributes);
+        candidateKey = findCandidateKeys();
         removeRedundancy(candidateKey);
         minimalCover();
 
@@ -322,7 +340,7 @@ public class Module1 extends BackgroundPanel {
         decomposition.add(new ArrayList<>(attributes));
         int currentnf;
         boolean firstExists = true;
-        if (highestNF.getText().charAt(5) == 'B') {
+        if (highestNF.getText().charAt(13) == 'B' || fdX.size() == 0) {
             return "Already in BCNF";
         } else {
             currentnf = highestNF.getText().charAt(5) - '0';
@@ -465,17 +483,32 @@ public class Module1 extends BackgroundPanel {
         }
     }
 
-    private Set<Set<String>> findCandidateKeys(Set<String> remainingSet) {
+    private Set<Set<String>> findCandidateKeys() {
         Set<Set<String>> candidateKey = new HashSet<>();
-        if (closureOf(remainingSet).equals(attributes)) {
-            candidateKey.add(remainingSet);
-            if (remainingSet.size() > 1) {
-                Set<String> temp = new HashSet<>(remainingSet);
-                for (String s : remainingSet) {
-                    temp.remove(s);
-                    candidateKey.addAll(findCandidateKeys(new HashSet<>(temp)));
-                    temp.add(s);
+        List<String> list = new ArrayList<>(attributes);
+        int n = list.size();
+        for (int i = 0; i < (1<<n); i++) {
+            int m = 1; // m is used to check set bit in binary representation.
+            Set<String> subset = new HashSet<>();
+            for (String s : list) {
+                if ((i & m) > 0) {
+                    subset.add(s);
                 }
+                m = m << 1;
+            }
+
+            boolean needToContinue = false;
+            for (Set<String> set : candidateKey)
+                if (subset.containsAll(set)) {
+                    needToContinue = true;
+                    break;
+                }
+
+            if (needToContinue) continue;
+
+            Set<String> closure = closureOf(subset);
+            if (closure.equals(attributes)) {
+                candidateKey.add(subset);
             }
         }
 
