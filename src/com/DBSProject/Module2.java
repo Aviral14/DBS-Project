@@ -10,13 +10,10 @@ import static com.DBSProject.CommonConstants.*;
 public class Module2 extends BackgroundPanel {
     private RoundTextField keyField;
     private RoundButton insertButton;
-    // private final bfr;
-    private final Directory dir;
+    private int bfr;
+    private Directory dir;
 
     public Module2() {
-        // Directory init
-        int bfr = 3, globalDepth = 1;
-        dir = new Directory(globalDepth, bfr);
 
         // GUI init
         framePanel = this;
@@ -108,28 +105,56 @@ public class Module2 extends BackgroundPanel {
         gDepthLabel.setVisible(false);
         display.setVisible(false);
 
+        setBfrButton.addActionListener(e -> {
+            try {
+                int value = Integer.parseInt(bfrField.getText());
+                try {
+                    if (bfr != 0) {
+                        throw new Exception("Bfr has already been set! Please Reset the directory to set it again.");
+                    }
+                    if (value < 0) {
+                        throw new InputMismatchException();
+                    }
+                    bfr = value;
+                    // Directory init
+                    int globalDepth = 1;
+                    dir = new Directory(globalDepth, bfr);
+                    showMsgPopUp("Blocking Factor has been succesfully set and directory has been created with bfr="
+                            + value + " and Global Depth=" + globalDepth);
+                } catch (InputMismatchException err) {
+                    showMsgPopUp("Please enter a non-negative integer!");
+                } catch (Exception err) {
+                    showMsgPopUp(err.getMessage());
+                }
+            } catch (NumberFormatException err) {
+                showMsgPopUp("Please enter a valid integer!");
+            }
+        });
+
         insertButton.addActionListener(e -> {
             try {
                 int value = Integer.parseInt(keyField.getText());
                 try {
                     String msg = dir.insert(value, false);
                     showMsgPopUp(msg);
+                    gDepthLabel.setText("Global Depth - " + dir.globalDepth);
+                    String ans = getResult();
+                    scrollPane.setViewportView(display);
+                    scrollPane.getPreferredSize();
+                    scrollPane.setBounds(200, 425, 700, 250);
+                    display.setText(ans);
+                    resultLabel.setVisible(true);
+                    gDepthLabel.setVisible(true);
+                    display.setVisible(true);
+                    scrollPane.setVisible(true);
                 } catch (InputMismatchException err) {
                     showMsgPopUp("Please enter a valid integer!");
+                } catch (NullPointerException err) {
+                    showMsgPopUp("Please set Blocking Factor first!");
                 }
-            } catch (NumberFormatException er) {
+            } catch (NumberFormatException err) {
                 showMsgPopUp("Please enter a valid integer!");
             }
-            gDepthLabel.setText("Global Depth - " + dir.globalDepth);
-            String ans = getResult();
-            scrollPane.setViewportView(display);
-            scrollPane.getPreferredSize();
-            scrollPane.setBounds(200, 425, 700, 250);
-            display.setText(ans);
-            resultLabel.setVisible(true);
-            gDepthLabel.setVisible(true);
-            display.setVisible(true);
-            scrollPane.setVisible(true);
         });
 
         searchButton.addActionListener(e -> {
@@ -140,8 +165,10 @@ public class Module2 extends BackgroundPanel {
                     showMsgPopUp(msg);
                 } catch (InputMismatchException err) {
                     showMsgPopUp("Please enter a valid integer!");
+                } catch (NullPointerException err) {
+                    showMsgPopUp("Please set Blocking Factor first!");
                 }
-            } catch (NumberFormatException er) {
+            } catch (NumberFormatException err) {
                 showMsgPopUp("Please enter a valid integer!");
             }
         });
