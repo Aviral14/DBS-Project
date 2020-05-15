@@ -10,6 +10,7 @@ import static com.DBSProject.CommonConstants.*;
 public class Module2 extends BackgroundPanel {
     private RoundTextField keyField;
     private RoundButton insertButton;
+    // private final bfr;
     private final Directory dir;
 
     public Module2() {
@@ -24,7 +25,7 @@ public class Module2 extends BackgroundPanel {
         heading.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 25));
         heading.setBounds(100, 20, 1100, 80);
         heading.setForeground(Color.WHITE);
-        JLabel subHeading = new JLabel("<html>Directory has been created with global depth=1 and bfr=3</html>");
+        JLabel subHeading = new JLabel("<html>Directory has been created with Global Depth=1</html>");
         subHeading.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 15));
         subHeading.setBounds(100, 50, 1100, 80);
         subHeading.setForeground(Color.WHITE);
@@ -38,43 +39,54 @@ public class Module2 extends BackgroundPanel {
         add(back);
         add(heading);
         add(subHeading);
-        add(new RectangleShape(100, 120, (frameWidth - 200), 90, Color.WHITE, 0.2f));
-        add(new RectangleShape(100, 230, (frameWidth - 200), 650, Color.WHITE, 0.2f));
+        add(new RectangleShape(100, 120, (frameWidth - 200), 140, Color.WHITE, 0.2f));
+        add(new RectangleShape(100, 280, (frameWidth - 200), 650, Color.WHITE, 0.2f));
 
         addIOComponents();
     }
 
     private void addIOComponents() {
+        JLabel bfrLabel = new JLabel("▸   Blocking Factor: ");
+        bfrLabel.setFont(new Font(getName(), Font.BOLD, 20));
+        bfrLabel.setForeground(Color.white);
+        bfrLabel.setBounds(150, 150, 400, 30);
+        RoundTextField bfrField = new RoundTextField(380, 160, 60, 20, 10, Color.RED, Color.green, false);
+        bfrField.setCaretColor(Color.white);
+        RoundButton setBfrButton = new RoundButton("Set BFR", 600, 150, 120, 40, 5, Color.white, blueColor, false);
+        setBfrButton.setFont(new Font(getName(), Font.BOLD, 12));
         JLabel keyLabel = new JLabel("▸   Key Value: ");
         keyLabel.setFont(new Font(getName(), Font.BOLD, 20));
         keyLabel.setForeground(Color.white);
-        keyLabel.setBounds(150, 150, 400, 30);
-        keyField = new RoundTextField(370, 160, 60, 20, 10, Color.RED, Color.green, false);
+        keyLabel.setBounds(150, 200, 400, 30);
+        keyField = new RoundTextField(380, 210, 60, 20, 10, Color.RED, Color.green, false);
         keyField.setCaretColor(Color.white);
-        insertButton = new RoundButton("Insert Key", 600, 150, 120, 40, 5, Color.white, blueColor, false);
+        insertButton = new RoundButton("Insert Key", 600, 200, 120, 40, 5, Color.white, blueColor, false);
         insertButton.setFont(new Font(getName(), Font.BOLD, 12));
-        RoundButton searchButton = new RoundButton("Search key", 750, 150, 120, 40, 5, Color.white, blueColor, false);
+        RoundButton searchButton = new RoundButton("Search key", 750, 200, 120, 40, 5, Color.white, blueColor, false);
         searchButton.setFont(new Font(getName(), Font.BOLD, 12));
-        RoundButton resetButton = new RoundButton("Reset", 900, 150, 120, 40, 5, Color.white, blueColor, false);
+        RoundButton resetButton = new RoundButton("Reset", 750, 150, 120, 40, 5, Color.white, blueColor, false);
         resetButton.setFont(new Font(getName(), Font.BOLD, 12));
 
         add(insertButton);
         add(searchButton);
         add(resetButton);
+        add(setBfrButton);
+        add(bfrLabel);
+        add(bfrField);
         add(keyLabel);
         add(keyField);
 
         JLabel resultLabel = new JLabel("<html>▸ &ensp; <u>Result →</u></html>");
         resultLabel.setFont(new Font(getName(), Font.BOLD, 20));
         resultLabel.setForeground(Color.GREEN);
-        resultLabel.setBounds(150, 290, 200, 25);
+        resultLabel.setBounds(150, 340, 200, 25);
         JLabel gDepthLabel = new JLabel("GDepth");
         gDepthLabel.setFont(new Font(getName(), Font.BOLD, 20));
         gDepthLabel.setForeground(Color.white);
-        gDepthLabel.setBounds(200, 325, 700, 25);
+        gDepthLabel.setBounds(200, 375, 700, 25);
         JTextArea display = new JTextArea();
         display.setEditable(false);
-        display.setBounds(200, 375, 700, 250);
+        display.setBounds(200, 425, 700, 250);
         display.setFont(new Font(getName(), Font.BOLD, 20));
         display.setForeground(Color.white);
         display.setOpaque(false);
@@ -112,7 +124,7 @@ public class Module2 extends BackgroundPanel {
             String ans = getResult();
             scrollPane.setViewportView(display);
             scrollPane.getPreferredSize();
-            scrollPane.setBounds(200, 375, 700, 250);
+            scrollPane.setBounds(200, 425, 700, 250);
             display.setText(ans);
             resultLabel.setVisible(true);
             gDepthLabel.setVisible(true);
