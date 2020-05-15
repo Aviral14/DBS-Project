@@ -322,10 +322,10 @@ public class Module1 extends BackgroundPanel {
         decomposition.add(new ArrayList<>(attributes));
         int currentnf;
         boolean firstExists = true;
-        if (highestNF.getText().charAt(5) == 'B') {
+        if (highestNF.getText().charAt(13) == 'B') {
             return "Already in BCNF";
         } else {
-            currentnf = highestNF.getText().charAt(5) - '0';
+            currentnf = highestNF.getText().charAt(13) - '0';
         }
         for (int i = 0; i < fdX.size(); i++) {
             Set<String> x = fdX.get(i);
