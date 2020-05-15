@@ -51,13 +51,16 @@ public class Module2 extends BackgroundPanel {
         keyLabel.setBounds(150, 150, 400, 30);
         keyField = new RoundTextField(370, 160, 60, 20, 10, Color.RED, Color.green, false);
         keyField.setCaretColor(Color.white);
-        insertButton = new RoundButton("Insert Key", 650, 150, 120, 40, 5, Color.white, blueColor, false);
+        insertButton = new RoundButton("Insert Key", 600, 150, 120, 40, 5, Color.white, blueColor, false);
         insertButton.setFont(new Font(getName(), Font.BOLD, 12));
-        RoundButton searchButton = new RoundButton("Search key", 800, 150, 120, 40, 5, Color.white, blueColor, false);
+        RoundButton searchButton = new RoundButton("Search key", 750, 150, 120, 40, 5, Color.white, blueColor, false);
         searchButton.setFont(new Font(getName(), Font.BOLD, 12));
+        RoundButton resetButton = new RoundButton("Reset", 900, 150, 120, 40, 5, Color.white, blueColor, false);
+        resetButton.setFont(new Font(getName(), Font.BOLD, 12));
 
         add(insertButton);
         add(searchButton);
+        add(resetButton);
         add(keyLabel);
         add(keyField);
 
@@ -129,6 +132,12 @@ public class Module2 extends BackgroundPanel {
             } catch (NumberFormatException er) {
                 showMsgPopUp("Please enter a valid integer!");
             }
+        });
+
+        resetButton.addActionListener(e -> {
+            mainFrame.remove(framePanel);
+            mainFrame.add(new Module2());
+            mainFrame.repaint();
         });
     }
 
