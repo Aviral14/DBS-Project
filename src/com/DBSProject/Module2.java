@@ -112,7 +112,7 @@ public class Module2 extends BackgroundPanel {
                     if (bfr != 0) {
                         throw new Exception("Bfr has already been set! Please Reset the directory to set it again.");
                     }
-                    if (value < 0) {
+                    if (value <= 0) {
                         throw new InputMismatchException();
                     }
                     bfr = value;
