@@ -4,8 +4,8 @@ import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
 
 public class RectangleShape extends Component {
-    private Color color;
-    private Float alpha;
+    private final Color color;
+    private final Float alpha;
     public RectangleShape(int x, int y, int w, int h, Color c, Float alpha) {
         setBounds(x, y, w, h);
         color = c;

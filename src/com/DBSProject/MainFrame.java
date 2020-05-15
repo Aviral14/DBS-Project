@@ -2,7 +2,6 @@ package com.DBSProject;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
@@ -49,7 +48,7 @@ class MainPanel extends BackgroundPanel {
 
         int temp = (frameHeight - 250) / 2;
         for (int i = 0; i < 2; i++) {
-            modules[i] = new RoundButton("Module " + (i + 1), frameWidth - 300, temp + 100 * (i), 200, 50, 25,
+            modules[i] = new RoundButton("Module " + (i + 1), frameWidth - 300, temp + 100 * (i) + 40, 200, 50, 25,
                     Color.WHITE, blueColor, true);
             add(modules[i]);
 

@@ -7,9 +7,9 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.RoundRectangle2D;
 
 public class RoundButton extends JButton {
-    private int radius;
-    private Color backColor;
-    private boolean borderPaint;
+    private final int radius;
+    private final Color backColor;
+    private final boolean borderPaint;
 
     public RoundButton(String label, int x, int y, int w, int h, int r, Color fColor, Color bColor, boolean border) {
         super(label);
